@@ -11,5 +11,9 @@ namespace SimpleBackup.Core
             ".config",
             "simple-backup"
         );
+        public static readonly string ConfigFullPath = Path.Join(
+            UserHomePath,
+            ConfigFilename
+        );
     }
 }
