@@ -47,74 +47,10 @@ namespace SimpleBackup.InterfaceConsole
             ReadConfig();
         }
         #endregion
-        #region CLI Utils
-        static void ShowHeader()
-        {
-            Console.WriteLine("Simple Backup - CLI Mode");
-            Console.WriteLine(new String('-', Console.WindowWidth));
-        }
-        static string GetInput()
-        {
-            Console.Write(">> ");
-            return Console.ReadLine();
-        }
-        static bool ShowYesNoInput(string msg)
-        {
-            while (true)
-            {
-                Console.Clear();
-                ShowHeader();
-                Console.WriteLine("CONFORMATION\n");
-                Console.WriteLine(msg);
-                Console.WriteLine("\t- (Y)es -> Accept");
-                Console.WriteLine("\t- (N)o -> Deny");
-
-                string choice = GetInput().ToLower();
-
-                if (choice == "y") { return true; }
-                if (choice == "n") { return false; }
-                else { ShowError("Enter A Valid Option"); }
-            }
-        }
-        static string ShowStringInput(string msg)
-        {
-            Console.Clear();
-            ShowHeader();
-            Console.WriteLine("ENTER STRING\n");
-            Console.WriteLine(msg);
-            return GetInput();
-        }
-        static int ShowIntInput(string msg)
-        {
-            while (true)
-            {
-                Console.Clear();
-                ShowHeader();
-                Console.WriteLine("ENTER INTEGER\n");
-                Console.WriteLine(msg);
-                bool isInt = int.TryParse(GetInput(), out int enteredInt);
-                if (isInt) { return enteredInt; }
-                ShowError("Not A Valid Integer");
-            }
-        }
-        static void ShowResume()
-        {
-            Console.Write("\nPress RET To Resume");
-            Console.ReadKey();
-        }
-        static void ShowError(string msg)
-        {
-            Console.Clear();
-            ShowHeader();
-            Console.WriteLine("ERROR\n");
-            Console.WriteLine(msg);
-            ShowResume();
-        }
-        #endregion
         static void ShowHelp()
         {
             Console.Clear();
-            ShowHeader();
+            Utils.ShowHeader();
             Console.WriteLine("HELP\n");
             Console.WriteLine("Welcome to Simple Backup, here is some help to get you started:\n");
             Console.WriteLine("-\tYou can do full-backups");
@@ -123,12 +59,12 @@ namespace SimpleBackup.InterfaceConsole
             Console.WriteLine("-\tYou can keep different configurations for backups");
             Console.WriteLine("-\tOnce everything is configured you can backup with one command");
             Console.WriteLine("-\tAll configs are stored in a xml file");
-            ShowResume();
+            Utils.ShowResume();
         }
         static void ShowMenu()
         {
             Console.Clear();
-            ShowHeader();
+            Utils.ShowHeader();
             Console.WriteLine("MENU\n");
             Console.WriteLine("-\t(C)onfigure -> view and edit app configuration");
             Console.WriteLine("-\t(H)elp -> show help");
@@ -159,7 +95,7 @@ namespace SimpleBackup.InterfaceConsole
             while (true)
             {
                 Console.Clear();
-                ShowHeader();
+                Utils.ShowHeader();
                 Console.WriteLine(title);
                 int pathsCount = currentPaths.Count;
                 for (int i = 0; i < pathsCount; i++)
@@ -170,7 +106,7 @@ namespace SimpleBackup.InterfaceConsole
                 Console.WriteLine("\t(C)lear -> remove all entries");
                 Console.WriteLine("\t(Q)uit -> go back");
 
-                string input = GetInput().ToLower();
+                string input = Utils.GetInput().ToLower();
                 bool isInt = int.TryParse(input, out int option);
                 if (input == "q")
                 {
@@ -179,7 +115,7 @@ namespace SimpleBackup.InterfaceConsole
                 else if (input == "a")
                 {
                     // TODO Validate it is a real path
-                    string newPath = ShowStringInput("Enter Path To Append");
+                    string newPath = Utils.ShowStringInput("Enter Path To Append");
                     if (!String.IsNullOrWhiteSpace(newPath))
                     {
                         currentPaths.Add(newPath);
@@ -201,7 +137,7 @@ namespace SimpleBackup.InterfaceConsole
                 }
                 else if (isInt && (option > 0 && option <= pathsCount))
                 {
-                    bool okToRemove = ShowYesNoInput("Are You Sure You Want To Remove That Path?");
+                    bool okToRemove = Utils.ShowYesNoInput("Are You Sure You Want To Remove That Path?");
                     option--;
                     if (okToRemove)
                     {
@@ -213,7 +149,7 @@ namespace SimpleBackup.InterfaceConsole
                         );
                     }
                 }
-                else { ShowError("Not A Valid Option"); }
+                else { Utils.ShowError("Not A Valid Option"); }
             }
         }
         static void InteractiveConfigMenu(int configIndex)
@@ -222,7 +158,7 @@ namespace SimpleBackup.InterfaceConsole
             {
                 BackupConfig selectedConfig = appConfig.BackupConfigs[configIndex];
                 Console.Clear();
-                ShowHeader();
+                Utils.ShowHeader();
                 Console.WriteLine("CONFIG - {0}\n", selectedConfig.Name);
                 Console.WriteLine("\t(1) -> Name = {0}", selectedConfig.Name);
                 Console.WriteLine("\t(2) -> Destination Path = {0}", selectedConfig.DestinationPath);
@@ -231,7 +167,7 @@ namespace SimpleBackup.InterfaceConsole
                 Console.WriteLine("\t(5) -> Versions To Keep = {0}", selectedConfig.VersionsToKeep);
                 Console.WriteLine("\t(Q)uit -> go back");
 
-                string input = GetInput().ToLower();
+                string input = Utils.GetInput().ToLower();
                 bool isInt = int.TryParse(input, out int option);
                 if (input == "q")
                 {
@@ -241,7 +177,7 @@ namespace SimpleBackup.InterfaceConsole
                 {
                     if (option == 1)
                     {
-                        string newName = ShowStringInput("Enter Updated Config Name");
+                        string newName = Utils.ShowStringInput("Enter Updated Config Name");
                         if (!String.IsNullOrWhiteSpace(newName))
                         {
                             selectedConfig.Name = newName;
@@ -252,7 +188,7 @@ namespace SimpleBackup.InterfaceConsole
                     else if (option == 2)
                     {
                         // TODO Validate it is a real path
-                        string newDestination = ShowStringInput("Enter Updated Destination Path");
+                        string newDestination = Utils.ShowStringInput("Enter Updated Destination Path");
                         if (!String.IsNullOrWhiteSpace(newDestination))
                         {
                             selectedConfig.DestinationPath = newDestination;
@@ -273,12 +209,12 @@ namespace SimpleBackup.InterfaceConsole
                     else if (option == 5)
                     {
                         // TODO more validation needed (what happens if user enters -2?)
-                        selectedConfig.VersionsToKeep = ShowIntInput("Enter Updated Versions To Keep");
+                        selectedConfig.VersionsToKeep = Utils.ShowIntInput("Enter Updated Versions To Keep");
                         appConfig.BackupConfigs[configIndex] = selectedConfig;
                         WriteConfig();
                     }
                 }
-                else { ShowError("Not A Valid Option"); }
+                else { Utils.ShowError("Not A Valid Option"); }
             }
         }
         static void InteractiveDefaultBackupConfigMenu()
@@ -287,7 +223,7 @@ namespace SimpleBackup.InterfaceConsole
             while (true)
             {
                 Console.Clear();
-                ShowHeader();
+                Utils.ShowHeader();
                 Console.WriteLine("CONFIG CHANGE DEFAULT\n");
                 Console.WriteLine(
                     "Currently: ({0}), {1}",
@@ -300,7 +236,7 @@ namespace SimpleBackup.InterfaceConsole
                     Console.WriteLine("\t({0}) -> {1}", i + 1, config.Name);
                 }
                 Console.WriteLine("\t(Q)uit -> go back");
-                string input = GetInput().ToLower();
+                string input = Utils.GetInput().ToLower();
                 bool isInt = int.TryParse(input, out int option);
                 if (input == "q")
                 {
@@ -312,7 +248,7 @@ namespace SimpleBackup.InterfaceConsole
                     appConfig.DefaultConfigI = option;
                     WriteConfig();
                 }
-                else { ShowError("Not A Valid Option"); }
+                else { Utils.ShowError("Not A Valid Option"); }
             }
         }
         static void InteractiveConfigSelectMenu()
@@ -320,7 +256,7 @@ namespace SimpleBackup.InterfaceConsole
             while (true)
             {
                 Console.Clear();
-                ShowHeader();
+                Utils.ShowHeader();
                 Console.WriteLine("CONFIG\n");
 
                 int configsCount = appConfig.BackupConfigs.Length;
@@ -334,11 +270,11 @@ namespace SimpleBackup.InterfaceConsole
                 Console.WriteLine("\t(R)eset -> reset to defaults");
                 Console.WriteLine("\t(Q)uit -> go back");
 
-                string input = GetInput().ToLower();
+                string input = Utils.GetInput().ToLower();
                 bool isInt = int.TryParse(input, out int option);
                 if (input == "w")
                 {
-                    appConfig.ShowHelp = ShowYesNoInput("Do You Want To Show Welcome?");
+                    appConfig.ShowHelp = Utils.ShowYesNoInput("Do You Want To Show Welcome?");
                     WriteConfig();
                 }
                 else if (input == "d")
@@ -347,7 +283,7 @@ namespace SimpleBackup.InterfaceConsole
                 }
                 else if (input == "r")
                 {
-                    bool resetConfirm = ShowYesNoInput("Do You Want To Reset ALL Configs?");
+                    bool resetConfirm = Utils.ShowYesNoInput("Do You Want To Reset ALL Configs?");
                     if (resetConfirm) { ResetConfig(); }
                 }
                 else if (input == "q")
@@ -363,14 +299,14 @@ namespace SimpleBackup.InterfaceConsole
                 }
                 else
                 {
-                    ShowError("Not A Valid Option");
+                    Utils.ShowError("Not A Valid Option");
                 }
             }
 
         }
         static void InteractiveMode()
         {
-            Console.Title = "Simple Backup - CLI Mode";
+            Console.Title = Utils.GetTitle();
             if (appConfig.ShowHelp)
             {
                 ShowHelp();
@@ -382,7 +318,7 @@ namespace SimpleBackup.InterfaceConsole
             while (run)
             {
                 ShowMenu();
-                switch (GetInput().ToLower())
+                switch (Utils.GetInput().ToLower())
                 {
                     case "h":
                         ShowHelp();
@@ -398,7 +334,7 @@ namespace SimpleBackup.InterfaceConsole
                     case " ":
                         break;
                     default:
-                        ShowError("Unknown Input");
+                        Utils.ShowError("Unknown Input");
                         break;
                 }
             }
