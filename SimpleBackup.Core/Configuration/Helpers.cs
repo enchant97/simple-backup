@@ -9,7 +9,7 @@ namespace SimpleBackup.Core.Configuration
         public static void Write(string filename, AppConfig appconfig)
         {
             XmlSerializer serializer = new(typeof(AppConfig));
-            using (var stream = File.OpenWrite(filename))
+            using (var stream = File.Open(filename, FileMode.Create))
                 serializer.Serialize(stream, appconfig);
         }
         public static AppConfig Read(string filename)
