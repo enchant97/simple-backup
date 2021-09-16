@@ -61,14 +61,24 @@ namespace SimpleBackup.InterfaceConsole
             Console.WriteLine("-\tAll configs are stored in a xml file");
             Utils.ShowResume();
         }
+        static void ShowCredits()
+        {
+            Console.Clear();
+            Utils.ShowHeader();
+            Console.WriteLine("License GPL-3.0\n");
+            Console.WriteLine(Constants.CopyrightText);
+            Utils.ShowResume();
+        }
         static void ShowMenu()
         {
             Console.Clear();
             Utils.ShowHeader();
             Console.WriteLine("MENU\n");
-            Console.WriteLine("-\t(C)onfigure -> View and edit app configuration");
-            Console.WriteLine("-\t(H)elp -> Show help");
-            Console.WriteLine("-\t(Q)uit -> Exit the app");
+            Console.WriteLine("\t(B)ackup -> Start a backup");
+            Console.WriteLine("\t(C)onfigure -> View and edit app configuration");
+            Console.WriteLine("\t(Cr)edits -> Show the credits");
+            Console.WriteLine("\t(H)elp -> Show help");
+            Console.WriteLine("\t(Q)uit -> Exit the app");
             Console.WriteLine();
         }
         static void InteractiveConfigPathsMenu(int configIndex, IncludedOrExcluded includedOrExcluded)
@@ -346,6 +356,14 @@ namespace SimpleBackup.InterfaceConsole
             }
 
         }
+        static void InteractiveBackup()
+        {
+            Console.Clear();
+            Utils.ShowHeader();
+            Console.WriteLine("BACKUP\n");
+            Console.WriteLine("Backup not implemented yet");
+            Utils.ShowResume();
+        }
         static void InteractiveMode()
         {
             Console.Title = Utils.GetTitle();
@@ -365,8 +383,14 @@ namespace SimpleBackup.InterfaceConsole
                     case "h":
                         ShowHelp();
                         break;
+                    case "b":
+                        InteractiveBackup();
+                        break;
                     case "c":
                         InteractiveConfigSelectMenu();
+                        break;
+                    case "cr":
+                        ShowCredits();
                         break;
                     case "q":
                         run = false;
