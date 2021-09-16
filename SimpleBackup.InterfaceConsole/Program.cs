@@ -66,9 +66,9 @@ namespace SimpleBackup.InterfaceConsole
             Console.Clear();
             Utils.ShowHeader();
             Console.WriteLine("MENU\n");
-            Console.WriteLine("-\t(C)onfigure -> view and edit app configuration");
-            Console.WriteLine("-\t(H)elp -> show help");
-            Console.WriteLine("-\t(Q)uit -> exit the app");
+            Console.WriteLine("-\t(C)onfigure -> View and edit app configuration");
+            Console.WriteLine("-\t(H)elp -> Show help");
+            Console.WriteLine("-\t(Q)uit -> Exit the app");
             Console.WriteLine();
         }
         static void InteractiveConfigPathsMenu(int configIndex, IncludedOrExcluded includedOrExcluded)
@@ -102,9 +102,9 @@ namespace SimpleBackup.InterfaceConsole
                 {
                     Console.WriteLine("\t({0}) -> {1}", i + 1, currentPaths[i]);
                 }
-                Console.WriteLine("\t(A)ppend -> add a new entry");
-                Console.WriteLine("\t(C)lear -> remove all entries");
-                Console.WriteLine("\t(Q)uit -> go back");
+                Console.WriteLine("\t(A)ppend -> Add a new entry");
+                Console.WriteLine("\t(C)lear -> Remove all entries");
+                Console.WriteLine("\t(Q)uit -> Go back");
 
                 string input = Utils.GetInput().ToLower();
                 bool isInt = int.TryParse(input, out int option);
@@ -165,13 +165,44 @@ namespace SimpleBackup.InterfaceConsole
                 Console.WriteLine("\t(3) -> Included Paths = {0} Paths", selectedConfig.IncludedPaths.Length);
                 Console.WriteLine("\t(4) -> Excluded Paths = {0} Paths", selectedConfig.ExcludedPaths.Length);
                 Console.WriteLine("\t(5) -> Versions To Keep = {0}", selectedConfig.VersionsToKeep);
-                Console.WriteLine("\t(Q)uit -> go back");
+                Console.WriteLine("\t(R)ename -> Rename the config name");
+                Console.WriteLine("\t(D)elete -> Delete the config");
+                Console.WriteLine("\t(Q)uit -> Go back");
 
                 string input = Utils.GetInput().ToLower();
                 bool isInt = int.TryParse(input, out int option);
                 if (input == "q")
                 {
                     break;
+                }
+                else if (input == "r")
+                {
+                    string newConfigName = Utils.ShowStringInput("Enter Updated Config Name");
+                    if (!String.IsNullOrWhiteSpace(newConfigName))
+                    {
+                        selectedConfig.Name = newConfigName;
+                        appConfig.BackupConfigs[configIndex] = selectedConfig;
+                        WriteConfig();
+                    }
+                }
+                else if (input == "d")
+                {
+                    bool deleteConfirm = Utils.ShowYesNoInput("Are You Sure You Want To Delete This Config?");
+                    if (deleteConfirm)
+                    {
+                        if (appConfig.BackupConfigs.Length <= 1)
+                        {
+                            appConfig.BackupConfigs = new[] { new BackupConfig() };
+                        }
+                        else
+                        {
+                            List<BackupConfig> configs = appConfig.BackupConfigs.ToList();
+                            configs.RemoveAt(configIndex);
+                            appConfig.BackupConfigs = configs.ToArray();
+                        }
+                        WriteConfig();
+                        return;
+                    }
                 }
                 else if (isInt && (option > 0 && option <= 5))
                 {
@@ -265,14 +296,25 @@ namespace SimpleBackup.InterfaceConsole
                     var config = appConfig.BackupConfigs[i];
                     Console.WriteLine("\t({0}) -> {1}", i + 1, config.Name);
                 }
-                Console.WriteLine("\t(W)elcome -> show welcome");
-                Console.WriteLine("\t(D)efault -> default backup config");
-                Console.WriteLine("\t(R)eset -> reset to defaults");
-                Console.WriteLine("\t(Q)uit -> go back");
+                Console.WriteLine("\t(A)dd -> Add Config");
+                Console.WriteLine("\t(W)elcome -> Show welcome");
+                Console.WriteLine("\t(D)efault -> Default backup config");
+                Console.WriteLine("\t(R)eset -> Reset to defaults");
+                Console.WriteLine("\t(Q)uit -> Go back");
 
                 string input = Utils.GetInput().ToLower();
                 bool isInt = int.TryParse(input, out int option);
-                if (input == "w")
+                if (input == "a")
+                {
+                    string newConfigName = Utils.ShowStringInput("Enter New Config Name");
+                    if (!String.IsNullOrWhiteSpace(newConfigName))
+                    {
+                        Array.Resize(ref appConfig.BackupConfigs, appConfig.BackupConfigs.Length + 1);
+                        appConfig.BackupConfigs[appConfig.BackupConfigs.Length - 1] = new BackupConfig() { Name = newConfigName };
+                        WriteConfig();
+                    }
+                }
+                else if (input == "w")
                 {
                     appConfig.ShowHelp = Utils.ShowYesNoInput("Do You Want To Show Welcome?");
                     WriteConfig();
