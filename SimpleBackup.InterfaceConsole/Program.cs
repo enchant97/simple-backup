@@ -1,12 +1,16 @@
 ﻿using System;
 using SimpleBackup.Core;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using SimpleBackup.Core.Configuration.Types;
 
 namespace SimpleBackup.InterfaceConsole
 {
+    enum IncludedOrExcluded { INCLUDED, EXCLUDED }
     class Program
     {
-        private static SimpleBackup.Core.Configuration.Types.AppConfig appConfig;
+        private static AppConfig appConfig;
         static void Main(string[] args)
         {
             ReadConfig();
@@ -23,6 +27,19 @@ namespace SimpleBackup.InterfaceConsole
         static void WriteConfig()
         {
             SimpleBackup.Core.Configuration.Helpers.Write(Constants.ConfigFullPath, appConfig);
+        }
+        static void WritePathIncludedOrExcluded(string[] newPaths, int currentIndex, IncludedOrExcluded includedOrExcluded)
+        {
+            switch (includedOrExcluded)
+            {
+                case IncludedOrExcluded.INCLUDED:
+                    appConfig.BackupConfigs[currentIndex].IncludedPaths = newPaths;
+                    break;
+                case IncludedOrExcluded.EXCLUDED:
+                    appConfig.BackupConfigs[currentIndex].ExcludedPaths = newPaths;
+                    break;
+            }
+            WriteConfig();
         }
         static void ResetConfig()
         {
@@ -57,6 +74,27 @@ namespace SimpleBackup.InterfaceConsole
                 if (choice == "y") { return true; }
                 if (choice == "n") { return false; }
                 else { ShowError("Enter A Valid Option"); }
+            }
+        }
+        static string ShowStringInput(string msg)
+        {
+            Console.Clear();
+            ShowHeader();
+            Console.WriteLine("ENTER STRING\n");
+            Console.WriteLine(msg);
+            return GetInput();
+        }
+        static int ShowIntInput(string msg)
+        {
+            while (true)
+            {
+                Console.Clear();
+                ShowHeader();
+                Console.WriteLine("ENTER INTEGER\n");
+                Console.WriteLine(msg);
+                bool isInt = int.TryParse(GetInput(), out int enteredInt);
+                if (isInt) { return enteredInt; }
+                ShowError("Not A Valid Integer");
             }
         }
         static void ShowResume()
@@ -97,11 +135,92 @@ namespace SimpleBackup.InterfaceConsole
             Console.WriteLine("-\t(Q)uit -> exit the app");
             Console.WriteLine();
         }
+        static void InteractiveConfigPathsMenu(int configIndex, IncludedOrExcluded includedOrExcluded)
+        {
+            string headerMsg = String.Empty;
+            List<string> currentPaths = new();
+            switch (includedOrExcluded)
+            {
+                case IncludedOrExcluded.INCLUDED:
+                    headerMsg = "INCLUDED";
+                    currentPaths = appConfig.BackupConfigs[configIndex].IncludedPaths.ToList();
+                    break;
+                case IncludedOrExcluded.EXCLUDED:
+                    headerMsg = "EXCLUDED";
+                    currentPaths = appConfig.BackupConfigs[configIndex].ExcludedPaths.ToList();
+                    break;
+            }
+            string title = String.Format(
+                "CONFIG - {0} - {1}\n",
+                appConfig.BackupConfigs[configIndex].Name,
+                headerMsg
+            );
+
+            while (true)
+            {
+                Console.Clear();
+                ShowHeader();
+                Console.WriteLine(title);
+                int pathsCount = currentPaths.Count;
+                for (int i = 0; i < pathsCount; i++)
+                {
+                    Console.WriteLine("\t({0}) -> {1}", i + 1, currentPaths[i]);
+                }
+                Console.WriteLine("\t(A)ppend -> add a new entry");
+                Console.WriteLine("\t(C)lear -> remove all entries");
+                Console.WriteLine("\t(Q)uit -> go back");
+
+                string input = GetInput().ToLower();
+                bool isInt = int.TryParse(input, out int option);
+                if (input == "q")
+                {
+                    break;
+                }
+                else if (input == "a")
+                {
+                    // TODO Validate it is a real path
+                    string newPath = ShowStringInput("Enter Path To Append");
+                    if (!String.IsNullOrWhiteSpace(newPath))
+                    {
+                        currentPaths.Add(newPath);
+                        WritePathIncludedOrExcluded(
+                            currentPaths.ToArray(),
+                            configIndex,
+                            includedOrExcluded
+                        );
+                    }
+                }
+                else if (input == "c")
+                {
+                    currentPaths.Clear();
+                    WritePathIncludedOrExcluded(
+                        currentPaths.ToArray(),
+                        configIndex,
+                        includedOrExcluded
+                    );
+                }
+                else if (isInt && (option > 0 && option <= pathsCount))
+                {
+                    bool okToRemove = ShowYesNoInput("Are You Sure You Want To Remove That Path?");
+                    option--;
+                    if (okToRemove)
+                    {
+                        currentPaths.RemoveAt(option);
+                        WritePathIncludedOrExcluded(
+                            currentPaths.ToArray(),
+                            configIndex,
+                            includedOrExcluded
+                        );
+                    }
+                }
+                else { ShowError("Not A Valid Option"); }
+            }
+        }
         static void InteractiveConfigMenu(int configIndex)
         {
             while (true)
             {
-                SimpleBackup.Core.Configuration.Types.BackupConfig selectedConfig = appConfig.BackupConfigs[configIndex];
+                BackupConfig selectedConfig = appConfig.BackupConfigs[configIndex];
                 Console.Clear();
                 ShowHeader();
                 Console.WriteLine("CONFIG - {0}\n", selectedConfig.Name);
@@ -120,7 +239,44 @@ namespace SimpleBackup.InterfaceConsole
                 }
                 else if (isInt && (option > 0 && option <= 5))
                 {
-                    // TODO
+                    if (option == 1)
+                    {
+                        string newName = ShowStringInput("Enter Updated Config Name");
+                        if (!String.IsNullOrWhiteSpace(newName))
+                        {
+                            selectedConfig.Name = newName;
+                            appConfig.BackupConfigs[configIndex] = selectedConfig;
+                            WriteConfig();
+                        }
+                    }
+                    else if (option == 2)
+                    {
+                        // TODO Validate it is a real path
+                        string newDestination = ShowStringInput("Enter Updated Destination Path");
+                        if (!String.IsNullOrWhiteSpace(newDestination))
+                        {
+                            selectedConfig.DestinationPath = newDestination;
+                            appConfig.BackupConfigs[configIndex] = selectedConfig;
+                            WriteConfig();
+                        }
+                    }
+                    else if (option == 3)
+                    {
+                        InteractiveConfigPathsMenu(configIndex, IncludedOrExcluded.INCLUDED);
+                        selectedConfig = appConfig.BackupConfigs[configIndex];
+                    }
+                    else if (option == 4)
+                    {
+                        InteractiveConfigPathsMenu(configIndex, IncludedOrExcluded.EXCLUDED);
+                        selectedConfig = appConfig.BackupConfigs[configIndex];
+                    }
+                    else if (option == 5)
+                    {
+                        // TODO more validation needed (what happens if user enters -2?)
+                        selectedConfig.VersionsToKeep = ShowIntInput("Enter Updated Versions To Keep");
+                        appConfig.BackupConfigs[configIndex] = selectedConfig;
+                        WriteConfig();
+                    }
                 }
                 else { ShowError("Not A Valid Option"); }
             }
