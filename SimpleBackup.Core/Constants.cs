@@ -30,5 +30,11 @@ namespace SimpleBackup.Core
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.";
+        public const string BackupName = "SIMPLEBACKUP";
+        public enum BackupType
+        {
+            FOLDER,
+            ZIP,
+        }
     }
 }
