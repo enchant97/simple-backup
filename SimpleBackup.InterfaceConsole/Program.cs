@@ -356,12 +356,104 @@ namespace SimpleBackup.InterfaceConsole
             }
 
         }
+        static int ShowGetBackupConfigSelect()
+        {
+            while (true)
+            {
+                Console.Clear();
+                Utils.ShowHeader();
+                Console.WriteLine("CONFIG SELECT\n");
+
+                int configsCount = appConfig.BackupConfigs.Length;
+                for (int i = 0; i < configsCount; i++)
+                {
+                    Console.WriteLine("\t({0}) -> {1}", i + 1, appConfig.BackupConfigs[i].Name);
+                }
+                Console.WriteLine("\t(D)efault -> Use Default, {0}", appConfig.DefaultConfigI + 1);
+                Console.WriteLine("\t(Q)uit -> Go back");
+
+                string input = Utils.GetInput().ToLower();
+                bool isInt = int.TryParse(input, out int option);
+
+                if (input == "q")
+                {
+                    return -1;
+                }
+                else if (input == "d")
+                {
+                    return appConfig.DefaultConfigI;
+                }
+                else if (isInt && (option > 0 && option <= configsCount))
+                {
+                    option--;
+                    return option;
+                }
+                else
+                {
+                    Utils.ShowError("Not A Valid Option");
+                }
+
+            }
+        }
         static void InteractiveBackup()
         {
+            int selectedBackupConfig = ShowGetBackupConfigSelect();
+            if (selectedBackupConfig == -1)
+            {
+                // user wanted to go back
+                return;
+            }
+
+            Queue<string> pathsToBackup = new();
+            string[] includedPaths = appConfig.BackupConfigs[selectedBackupConfig].IncludedPaths;
+            string[] excludedPaths = appConfig.BackupConfigs[selectedBackupConfig].ExcludedPaths;
+            string backupDstPath = Path.Join(
+                appConfig.BackupConfigs[selectedBackupConfig].DestinationPath,
+                Paths.GenerateBackupName()
+            );
+            int foundCount = 0;
+            int copiedCount = 0;
+
+            foreach (var searchPath in includedPaths)
+            {
+                foreach (var foundFilePath in Discovery.SearchFilesEnumerated(searchPath, excludedPaths))
+                {
+                    pathsToBackup.Enqueue(foundFilePath);
+                    foundCount++;
+
+                    Console.Clear();
+                    Utils.ShowHeader();
+                    Console.WriteLine("DISCOVERING FILES\n");
+                    Console.WriteLine("Found: {0}", foundCount);
+                }
+            }
+
+            foreach (var foundFilePath in pathsToBackup)
+            {
+                Console.Clear();
+                Utils.ShowHeader();
+                Console.WriteLine("COPYING FILES\n");
+                Console.WriteLine("Copied: {0}/{1}", copiedCount, foundCount);
+                string currDstPath = Paths.CombineFullPath(foundFilePath, backupDstPath);
+                Directory.CreateDirectory(Path.GetDirectoryName(currDstPath));
+                try
+                {
+                    File.Copy(foundFilePath, currDstPath);
+                    copiedCount++;
+                }
+                catch (Exception ex)
+                {
+                    if (ex is System.IO.FileNotFoundException ||
+                        ex is System.IO.IOException) { }
+                    else { throw; }
+                    // TODO show a log of all files missing or is a file type that can't be copied
+                }
+            }
+
             Console.Clear();
             Utils.ShowHeader();
-            Console.WriteLine("BACKUP\n");
-            Console.WriteLine("Backup not implemented yet");
+            Console.WriteLine("FINISHED\n");
+            Console.WriteLine("All Found Files Were Copied");
             Utils.ShowResume();
         }
         static void InteractiveMode()
