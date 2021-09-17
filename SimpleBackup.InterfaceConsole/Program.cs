@@ -395,6 +395,20 @@ namespace SimpleBackup.InterfaceConsole
 
             }
         }
+        static void ShowDiscoveringFiles(int currCount)
+        {
+            Console.Clear();
+            Utils.ShowHeader();
+            Console.WriteLine("DISCOVERING FILES\n");
+            Console.WriteLine("Found: {0}", currCount);
+        }
+        static void ShowCopyingFiles(int currCount, int maxCount)
+        {
+            Console.Clear();
+            Utils.ShowHeader();
+            Console.WriteLine("COPYING FILES\n");
+            Console.WriteLine("Copied: {0}/{1}", currCount, maxCount);
+        }
         static void InteractiveBackup()
         {
             int selectedBackupConfig = ShowGetBackupConfigSelect();
@@ -420,26 +434,19 @@ namespace SimpleBackup.InterfaceConsole
                 {
                     pathsToBackup.Enqueue(foundFilePath);
                     foundCount++;
-
-                    Console.Clear();
-                    Utils.ShowHeader();
-                    Console.WriteLine("DISCOVERING FILES\n");
-                    Console.WriteLine("Found: {0}", foundCount);
+                    ShowDiscoveringFiles(foundCount);
                 }
             }
 
             foreach (var foundFilePath in pathsToBackup)
             {
-                Console.Clear();
-                Utils.ShowHeader();
-                Console.WriteLine("COPYING FILES\n");
-                Console.WriteLine("Copied: {0}/{1}", copiedCount, foundCount);
                 string currDstPath = Paths.CombineFullPath(foundFilePath, backupDstPath);
                 Directory.CreateDirectory(Path.GetDirectoryName(currDstPath));
                 try
                 {
                     File.Copy(foundFilePath, currDstPath);
                     copiedCount++;
+                    ShowCopyingFiles(copiedCount, foundCount);
                 }
                 catch (Exception ex)
                 {
