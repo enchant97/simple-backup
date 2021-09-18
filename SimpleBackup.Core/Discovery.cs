@@ -1,6 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace SimpleBackup.Core
 {
@@ -74,6 +75,14 @@ namespace SimpleBackup.Core
                 if (regex.IsMatch(fileName))
                     yield return fileName;
             }
+        }
+        /// <summary>
+        /// Find previous file and folder backups in a directory.
+        /// </summary>
+        public static IEnumerable<string> FindPreviousBackups(string backupDirectory)
+        {
+            return FindPreviousBackupFiles(backupDirectory).Concat(
+                FindPreviousBackupFolders(backupDirectory));
         }
     }
 }

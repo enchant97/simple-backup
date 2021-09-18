@@ -411,18 +411,19 @@ namespace SimpleBackup.InterfaceConsole
         }
         static void InteractiveBackup()
         {
-            int selectedBackupConfig = ShowGetBackupConfigSelect();
-            if (selectedBackupConfig == -1)
+            int selectedBackupConfigI = ShowGetBackupConfigSelect();
+            if (selectedBackupConfigI == -1)
             {
                 // user wanted to go back
                 return;
             }
 
+            BackupConfig selectedBackupConfig = appConfig.BackupConfigs[selectedBackupConfigI];
             Queue<string> pathsToBackup = new();
-            string[] includedPaths = appConfig.BackupConfigs[selectedBackupConfig].IncludedPaths;
-            string[] excludedPaths = appConfig.BackupConfigs[selectedBackupConfig].ExcludedPaths;
+            string[] includedPaths = selectedBackupConfig.IncludedPaths;
+            string[] excludedPaths = selectedBackupConfig.ExcludedPaths;
             string backupDstPath = Path.Join(
-                appConfig.BackupConfigs[selectedBackupConfig].DestinationPath,
+                selectedBackupConfig.DestinationPath,
                 Paths.GenerateBackupName()
             );
             int foundCount = 0;
@@ -455,6 +456,19 @@ namespace SimpleBackup.InterfaceConsole
                     else { throw; }
                     // TODO show a log of all files missing or is a file type that can't be copied
                 }
+            }
+
+            if (selectedBackupConfig.VersionsToKeep > 0)
+            {
+                Console.Clear();
+                Utils.ShowHeader();
+                Console.WriteLine("CLEANING\n");
+
+                int backupsRemoved = Cleaning.RemovePreviousBackups(
+                    selectedBackupConfig.VersionsToKeep,
+                    selectedBackupConfig.DestinationPath
+                );
+                Console.WriteLine("Removed {0} Backups", backupsRemoved);
             }
 
             Console.Clear();
