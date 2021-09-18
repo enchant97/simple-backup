@@ -31,6 +31,10 @@ namespace SimpleBackup.Core
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.";
         public const string BackupName = "SIMPLEBACKUP";
+        public const string BackupNameSep = "-";
+        public const string BackupNameDateTimeFormat = "yyyyMMddTHHmmssZ";
+        public const string BackupNameFolderRegex = @"^SIMPLEBACKUP-\d{8}T\d{6}Z$";
+        public const string BackupNameFileRegex = @"^SIMPLEBACKUP-\d{8}T\d{6}Z\.\S+$";
         public enum BackupType
         {
             FOLDER,

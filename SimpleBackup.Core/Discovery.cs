@@ -1,5 +1,6 @@
 using System.IO;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace SimpleBackup.Core
 {
@@ -21,7 +22,7 @@ namespace SimpleBackup.Core
         {
             foreach (var possibleParent in possibleParents)
             {
-                if (possibleChild.StartsWith(possibleParent))
+                if (IsPathPartOf(possibleChild, possibleParent))
                     return true;
             }
             return false;
@@ -39,11 +40,39 @@ namespace SimpleBackup.Core
         /// </summary>
         public static IEnumerable<string> SearchFilesEnumerated(string startingDirectory, string[] excludedPaths)
         {
-            var files = Directory.EnumerateFiles(startingDirectory, "*", SearchOption.AllDirectories);
+            var files = SearchFilesEnumerated(startingDirectory);
             foreach (var file in files)
             {
-                if(!IsPathPartOf(file, excludedPaths))
+                if (!IsPathPartOf(file, excludedPaths))
                     yield return file;
+            }
+        }
+        /// <summary>
+        /// Find previous folder backups in a directory
+        /// </summary>
+        public static IEnumerable<string> FindPreviousBackupFolders(string backupDirectory)
+        {
+            var folders = Directory.EnumerateDirectories(backupDirectory, "*", SearchOption.TopDirectoryOnly);
+            Regex regex = new(Constants.BackupNameFolderRegex);
+            foreach (var folderPath in folders)
+            {
+                string folderName = Path.GetFileName(folderPath);
+                if (regex.IsMatch(folderName))
+                    yield return folderName;
+            }
+        }
+        /// <summary>
+        /// Find previous file backups in a directory.
+        /// </summary>
+        public static IEnumerable<string> FindPreviousBackupFiles(string backupDirectory)
+        {
+            var files = Directory.EnumerateFiles(backupDirectory, "*", SearchOption.TopDirectoryOnly);
+            Regex regex = new(Constants.BackupNameFileRegex);
+            foreach (var filePath in files)
+            {
+                string fileName = Path.GetFileName(filePath);
+                if (regex.IsMatch(fileName))
+                    yield return fileName;
             }
         }
     }

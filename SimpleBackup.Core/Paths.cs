@@ -23,8 +23,8 @@ namespace SimpleBackup.Core
         /// </summary>
         public static string GenerateBackupName()
         {
-            string backupName = DateTime.UtcNow.ToString("u").Replace(":", ".");
-            backupName = Constants.BackupName + " " + backupName;
+            string backupName = DateTime.UtcNow.ToString(Constants.BackupNameDateTimeFormat);
+            backupName = Constants.BackupName + Constants.BackupNameSep + backupName;
             return backupName;
         }
         /// <summary>
@@ -32,8 +32,7 @@ namespace SimpleBackup.Core
         /// </summary>
         public static string GenerateBackupName(Constants.BackupType backupType)
         {
-            string backupName = DateTime.UtcNow.ToString("u").Replace(":", ".");
-            backupName = Constants.BackupName + " " + backupName;
+            string backupName = GenerateBackupName();
             switch (backupType)
             {
                 case Constants.BackupType.ZIP:
