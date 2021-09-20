@@ -1,8 +1,9 @@
 ﻿using System;
-using SimpleBackup.Core;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using SimpleBackup.Core;
+using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration.Types;
 
 namespace SimpleBackup.InterfaceConsole
@@ -419,9 +420,6 @@ namespace SimpleBackup.InterfaceConsole
             }
 
             BackupConfig selectedBackupConfig = appConfig.BackupConfigs[selectedBackupConfigI];
-            Queue<string> pathsToBackup = new();
-            string[] includedPaths = selectedBackupConfig.IncludedPaths;
-            string[] excludedPaths = selectedBackupConfig.ExcludedPaths;
             string backupDstPath = Path.Join(
                 selectedBackupConfig.DestinationPath,
                 Paths.GenerateBackupName()
@@ -429,35 +427,27 @@ namespace SimpleBackup.InterfaceConsole
             int foundCount = 0;
             int copiedCount = 0;
 
-            foreach (var searchPath in includedPaths)
-            {
-                foreach (var foundFilePath in Discovery.SearchFilesEnumerated(searchPath, excludedPaths))
-                {
-                    pathsToBackup.Enqueue(foundFilePath);
-                    foundCount++;
-                    ShowDiscoveringFiles(foundCount);
-                }
-            }
+            BackupHandler backupHandler = new(
+                backupDstPath,
+                selectedBackupConfig.IncludedPaths,
+                selectedBackupConfig.ExcludedPaths,
+                false
+            );
 
-            foreach (var foundFilePath in pathsToBackup)
-            {
-                string currDstPath = Paths.CombineFullPath(foundFilePath, backupDstPath);
-                Directory.CreateDirectory(Path.GetDirectoryName(currDstPath));
-                try
-                {
-                    File.Copy(foundFilePath, currDstPath);
-                    copiedCount++;
-                    ShowCopyingFiles(copiedCount, foundCount);
-                }
-                catch (Exception ex)
-                {
-                    if (ex is System.IO.FileNotFoundException ||
-                        ex is System.IO.IOException) { }
-                    else { throw; }
-                    // TODO show a log of all files missing or is a file type that can't be copied
-                }
-            }
+            // setup events
+            backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) => {
+                foundCount++;
+                ShowDiscoveringFiles(foundCount);
+            };
+            backupHandler.CopyEvent += (object sender, BackupHandlerEventArgs args) => {
+                copiedCount++;
+                ShowCopyingFiles(copiedCount, foundCount);
+            };
 
+            // This does not currently run as a separate thread so it will block
+            backupHandler.Start();
+
+            // start clean-up of previous backups (if needed)
             if (selectedBackupConfig.VersionsToKeep > 0)
             {
                 Console.Clear();

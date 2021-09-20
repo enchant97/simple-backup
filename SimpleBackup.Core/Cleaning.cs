@@ -37,6 +37,7 @@ namespace SimpleBackup.Core
 
             // make sure newest backups are first (Decending)
             Array.Sort(allBackups);
+            Array.Reverse(allBackups);
 
             for (int i = versionsToKeep; i < backupsLength; i++)
             {
