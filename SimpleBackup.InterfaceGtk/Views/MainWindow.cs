@@ -15,8 +15,6 @@ namespace SimpleBackup.InterfaceGtk.Views
                 "SimpleBackup GUI is not currently implemented");
 
             Add(tempMessage);
-
-            ShowAll();
         }
         private void OnDelete(object obj, DeleteEventArgs args)
         {
