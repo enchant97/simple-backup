@@ -49,6 +49,7 @@ namespace SimpleBackup.Core.Backup
         private bool isPaused = false;
         private readonly string[] includedPaths;
         private readonly string[] excludedPaths;
+        private readonly string[] excludedRegexFilenames;
         private readonly string destinationPath;
         private readonly bool pauseOnError;
         public bool IsBackupInProgress { get => isBackupInProgress; }
@@ -63,7 +64,7 @@ namespace SimpleBackup.Core.Backup
             {
                 try
                 {
-                    foreach (var foundFilePath in Discovery.SearchFilesEnumerated(searchPath, excludedPaths))
+                    foreach (var foundFilePath in Discovery.SearchFilesEnumerated(searchPath, excludedPaths, excludedRegexFilenames))
                     {
                         if (IsPaused) { break; }
                         pathsLeft.Enqueue(foundFilePath);
@@ -134,11 +135,13 @@ namespace SimpleBackup.Core.Backup
             string destinationPath,
             string[] includedPaths,
             string[] excludedPaths,
+            string[] excludedRegexFilenames,
             bool pauseOnError)
         {
             this.destinationPath = destinationPath;
             this.includedPaths = includedPaths;
             this.excludedPaths = excludedPaths;
+            this.excludedRegexFilenames = excludedRegexFilenames;
             this.pauseOnError = pauseOnError;
             pathsLeft = new();
         }

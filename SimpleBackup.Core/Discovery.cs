@@ -29,6 +29,19 @@ namespace SimpleBackup.Core
             return false;
         }
         /// <summary>
+        /// Check whether a path matches regular expression
+        /// </summary>
+        public static bool IsPathMatchRegex(string filePath, string[] regexPatterns)
+        {
+            foreach (var regexPattern in regexPatterns)
+            {
+                Regex regex = new(regexPattern);
+                if (regex.IsMatch(filePath))
+                    return true;
+            }
+            return false;
+        }
+        /// <summary>
         /// Search for all any file from a starting directory
         /// </summary>
         public static IEnumerable<string> SearchFilesEnumerated(string startingDirectory)
@@ -46,6 +59,24 @@ namespace SimpleBackup.Core
             {
                 if (!IsPathPartOf(file, excludedPaths))
                     yield return file;
+            }
+        }
+        /// <summary>
+        /// Search for all any file from a starting directory,
+        /// skipping any files that are part of the given excluded paths
+        /// and skipping filenames that match given regex
+        /// </summary>
+        public static IEnumerable<string> SearchFilesEnumerated(
+            string startingDirectory,
+            string[] excludedPaths,
+            string[] excludedRegexFilenames)
+        {
+            var files = SearchFilesEnumerated(startingDirectory);
+            foreach (var file in files)
+            {
+                if (!IsPathPartOf(file, excludedPaths))
+                    if (!IsPathMatchRegex(Path.GetFileName(file), excludedRegexFilenames))
+                        yield return file;
             }
         }
         /// <summary>

@@ -431,6 +431,7 @@ namespace SimpleBackup.InterfaceConsole
                 backupDstPath,
                 selectedBackupConfig.IncludedPaths,
                 selectedBackupConfig.ExcludedPaths,
+                appConfig.ExcludedFilenames,
                 false
             );
 

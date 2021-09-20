@@ -10,6 +10,7 @@ namespace SimpleBackup.Core.Configuration.Types
         public bool ShowHelp = true;
         public int DefaultConfigI = 0;
         public BackupConfig[] BackupConfigs = { new BackupConfig() };
+        public string[] ExcludedFilenames = { @".DS_Store", @"^[Tt]humbs.db$" };
     }
     public class BackupConfig
     {
