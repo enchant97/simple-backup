@@ -8,7 +8,7 @@ namespace SimpleBackup.InterfaceGtk.Views
     class MainWindow : Window
     {
         private int currConfigI;
-        private readonly Label configName;
+        private readonly Entry configName;
         private readonly Label configLastBackup;
         private readonly SpinButton configVersionsToKeepSpinner;
         public MainWindow() : base(Constants.AppName + " - GUI Mode")
@@ -26,23 +26,37 @@ namespace SimpleBackup.InterfaceGtk.Views
             MenuItem mFile = new("File") { Submenu = file };
             MenuItem mQuit = new("Quit");
             mQuit.Activated += OnQuit;
+            Menu config = new();
+            MenuItem mConfig = new("Config") { Submenu = config };
+            MenuItem mConfigNew = new("New");
+            MenuItem mConfigLoad = new("Load");
+            MenuItem mConfigChangeDefault = new("Change Default");
+            MenuItem mConfigDeleteCurrent = new("Delete Current");
+            MenuItem mConfigDeleteAll = new("Delete All");
+
             Menu help = new();
             MenuItem mHelp = new("Help") { Submenu = help };
             MenuItem mAbout = new("About");
             mAbout.Activated += OnAbout;
 
             file.Append(mQuit);
+            config.Append(mConfigNew);
+            config.Append(mConfigLoad);
+            config.Append(mConfigChangeDefault);
+            config.Append(mConfigDeleteCurrent);
+            config.Append(mConfigDeleteAll);
             help.Append(mAbout);
             menuBar.Append(mFile);
+            menuBar.Append(mConfig);
             menuBar.Append(mHelp);
-            menuBar.Append(file);
 
             Label title = new(Constants.AppName + " - GUI MODE");
             configName = new();
+            configName.TextDeleted += OnConfigNameChange;
+            configName.TextInserted += OnConfigNameChange;
             configLastBackup = new();
             Label configVersionsToKeepLabel = new("Version To Keep");
             configVersionsToKeepSpinner = new(0, 100, 1);
-
             configVersionsToKeepSpinner.ValueChanged += OnVersionsToKeepChange;
 
             mainBox.PackStart(menuBar, false, false, 0);
@@ -81,6 +95,11 @@ namespace SimpleBackup.InterfaceGtk.Views
                                    "- All configs are stored in a xml file\n";
             aboutDialog.Run();
             aboutDialog.Destroy();
+        }
+        private void OnConfigNameChange(object obj, EventArgs args)
+        {
+            QuickConfig.AppConfig.BackupConfigs[currConfigI].Name = configName.Text;
+            QuickConfig.Write();
         }
         private void OnVersionsToKeepChange(object obj, EventArgs args)
         {
