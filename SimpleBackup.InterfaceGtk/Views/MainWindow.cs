@@ -1,16 +1,21 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Gtk;
 using SimpleBackup.Core;
 using SimpleBackup.Core.Configuration;
+using SimpleBackup.Core.Configuration.Types;
 
 namespace SimpleBackup.InterfaceGtk.Views
 {
     class MainWindow : Window
     {
+        #region Fields
         private int currConfigI;
         private readonly Entry configName;
         private readonly Label configLastBackup;
         private readonly SpinButton configVersionsToKeepSpinner;
+        #endregion
         public MainWindow() : base(Constants.AppName + " - GUI Mode")
         {
             QuickConfig.Read();
@@ -29,11 +34,15 @@ namespace SimpleBackup.InterfaceGtk.Views
             Menu config = new();
             MenuItem mConfig = new("Config") { Submenu = config };
             MenuItem mConfigNew = new("New");
+            mConfigNew.Activated += OnConfigNew;
             MenuItem mConfigLoad = new("Load");
+            mConfigLoad.Activated += OnConfigLoad;
             MenuItem mConfigChangeDefault = new("Change Default");
+            mConfigChangeDefault.Activated += OnConfigChangeDefault;
             MenuItem mConfigDeleteCurrent = new("Delete Current");
-            MenuItem mConfigDeleteAll = new("Delete All");
-
+            mConfigDeleteCurrent.Activated += OnConfigDeleteCurrent;
+            MenuItem mConfigResetAll = new("Reset All");
+            mConfigResetAll.Activated += OnConfigResetAll;
             Menu help = new();
             MenuItem mHelp = new("Help") { Submenu = help };
             MenuItem mAbout = new("About");
@@ -44,7 +53,7 @@ namespace SimpleBackup.InterfaceGtk.Views
             config.Append(mConfigLoad);
             config.Append(mConfigChangeDefault);
             config.Append(mConfigDeleteCurrent);
-            config.Append(mConfigDeleteAll);
+            config.Append(mConfigResetAll);
             help.Append(mAbout);
             menuBar.Append(mFile);
             menuBar.Append(mConfig);
@@ -77,6 +86,7 @@ namespace SimpleBackup.InterfaceGtk.Views
             configLastBackup.Text = loadedConfig.LastBackup.ToString();
             configVersionsToKeepSpinner.Value = loadedConfig.VersionsToKeep;
         }
+        #region Events
         private void OnQuit(object obj, EventArgs args)
         {
             Application.Quit();
@@ -96,6 +106,72 @@ namespace SimpleBackup.InterfaceGtk.Views
             aboutDialog.Run();
             aboutDialog.Destroy();
         }
+        private void OnConfigNew(object obj, EventArgs args)
+        {
+            AskTextInput dialog = new(this, "Create Config", "Enter A Name For The New Config");
+            var response = dialog.Run();
+            if (response == ((int)ResponseType.Ok))
+            {
+                if (!string.IsNullOrEmpty(dialog.Input))
+                {
+                    Array.Resize(ref QuickConfig.AppConfig.BackupConfigs, QuickConfig.AppConfig.BackupConfigs.Length + 1);
+                    QuickConfig.AppConfig.BackupConfigs[QuickConfig.AppConfig.BackupConfigs.Length - 1] = new BackupConfig() { Name = dialog.Input };
+                    QuickConfig.Write();
+                }
+            }
+            dialog.Destroy();
+        }
+        private void OnConfigLoad(object obj, EventArgs args)
+        {
+            string[] configNames = QuickConfig.AppConfig.BackupConfigs.Select(config => config.Name).ToArray();
+            AskChoice dialog = new(this, "Load Config", "Select A Config To Load", configNames);
+            var response = dialog.Run();
+            if (response == ((int)ResponseType.Ok))
+            {
+                if (dialog.SelectedI != -1)
+                {
+                    LoadConfigWidgets(dialog.SelectedI);
+                }
+            }
+            dialog.Destroy();
+        }
+        private void OnConfigChangeDefault(object obj, EventArgs args)
+        {
+            string[] configNames = QuickConfig.AppConfig.BackupConfigs.Select(config => config.Name).ToArray();
+            AskChoice dialog = new(this, "Change Default Config", "Select A Config To Be Default", configNames);
+            var response = dialog.Run();
+            if (response == ((int)ResponseType.Ok))
+            {
+                if (dialog.SelectedI != -1)
+                {
+                    QuickConfig.AppConfig.DefaultConfigI = dialog.SelectedI;
+                    QuickConfig.Write();
+                }
+            }
+            dialog.Destroy();
+        }
+        private void OnConfigDeleteCurrent(object obj, EventArgs args)
+        {
+            if (QuickConfig.AppConfig.BackupConfigs.Length <= 1)
+                QuickConfig.AppConfig.BackupConfigs = new[] { new BackupConfig() };
+            else
+            {
+                List<BackupConfig> configs = QuickConfig.AppConfig.BackupConfigs.ToList();
+                configs.RemoveAt(currConfigI);
+                QuickConfig.AppConfig.BackupConfigs = configs.ToArray();
+                // reset default config as it's now out of range
+                if (QuickConfig.AppConfig.DefaultConfigI >= QuickConfig.AppConfig.BackupConfigs.Length ||
+                        QuickConfig.AppConfig.DefaultConfigI > currConfigI)
+                    QuickConfig.AppConfig.DefaultConfigI = 0;
+            }
+            QuickConfig.Write();
+            LoadConfigWidgets(QuickConfig.AppConfig.DefaultConfigI);
+        }
+        private void OnConfigResetAll(object obj, EventArgs args)
+        {
+            QuickConfig.Reset();
+            LoadConfigWidgets(QuickConfig.AppConfig.DefaultConfigI);
+        }
         private void OnConfigNameChange(object obj, EventArgs args)
         {
             QuickConfig.AppConfig.BackupConfigs[currConfigI].Name = configName.Text;
@@ -106,5 +182,6 @@ namespace SimpleBackup.InterfaceGtk.Views
             QuickConfig.AppConfig.BackupConfigs[currConfigI].VersionsToKeep = configVersionsToKeepSpinner.ValueAsInt;
             QuickConfig.Write();
         }
+        #endregion
     }
 }
