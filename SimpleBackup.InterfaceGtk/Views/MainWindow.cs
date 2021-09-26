@@ -12,9 +12,13 @@ namespace SimpleBackup.InterfaceGtk.Views
     {
         #region Fields
         private int currConfigI;
+        private readonly ToggleButton configLock;
         private readonly Entry configName;
         private readonly Label configLastBackup;
         private readonly SpinButton configVersionsToKeepSpinner;
+        private readonly Button includedPathsBnt;
+        private readonly Button excludedPathsBnt;
+        private readonly Button startBackup;
         #endregion
         public MainWindow() : base(Constants.AppName + " - GUI Mode")
         {
@@ -60,6 +64,8 @@ namespace SimpleBackup.InterfaceGtk.Views
             menuBar.Append(mHelp);
 
             Label title = new(Constants.AppName + " - GUI MODE");
+            configLock = new("Readonly");
+            configLock.Clicked += OnConfigLockToggle;
             configName = new();
             configName.TextDeleted += OnConfigNameChange;
             configName.TextInserted += OnConfigNameChange;
@@ -67,16 +73,24 @@ namespace SimpleBackup.InterfaceGtk.Views
             Label configVersionsToKeepLabel = new("Version To Keep");
             configVersionsToKeepSpinner = new(0, 100, 1);
             configVersionsToKeepSpinner.ValueChanged += OnVersionsToKeepChange;
+            includedPathsBnt = new("Included Paths");
+            excludedPathsBnt = new("Excluded Paths");
+            startBackup = new("Start");
 
             mainBox.PackStart(menuBar, false, false, 0);
             mainBox.PackStart(title, false, false, 14);
+            mainBox.PackStart(configLock, false, false, 0);
             mainBox.PackStart(configName, false, false, 0);
             mainBox.PackStart(configLastBackup, false, false, 0);
             mainBox.PackStart(configVersionsToKeepLabel, false, false, 0);
             mainBox.PackStart(configVersionsToKeepSpinner, false, false, 0);
+            mainBox.PackStart(includedPathsBnt, false, false, 0);
+            mainBox.PackStart(excludedPathsBnt, false, false, 0);
+            mainBox.PackStart(startBackup, false, false, 0);
             Add(mainBox);
 
             LoadConfigWidgets(QuickConfig.AppConfig.DefaultConfigI);
+            LockConfigWidgets();
         }
         private void LoadConfigWidgets(int configIndex)
         {
@@ -85,6 +99,15 @@ namespace SimpleBackup.InterfaceGtk.Views
             configName.Text = loadedConfig.Name;
             configLastBackup.Text = loadedConfig.LastBackup.ToString();
             configVersionsToKeepSpinner.Value = loadedConfig.VersionsToKeep;
+        }
+        private void LockConfigWidgets(bool locked = true)
+        {
+            locked = !locked;
+            configName.Sensitive = locked;
+            configVersionsToKeepSpinner.Sensitive = locked;
+            includedPathsBnt.Sensitive = locked;
+            excludedPathsBnt.Sensitive = locked;
+            startBackup.Sensitive = !locked;
         }
         #region Events
         private void OnQuit(object obj, EventArgs args)
@@ -171,6 +194,20 @@ namespace SimpleBackup.InterfaceGtk.Views
         {
             QuickConfig.Reset();
             LoadConfigWidgets(QuickConfig.AppConfig.DefaultConfigI);
+        }
+        private void OnConfigLockToggle(object obj, EventArgs args)
+        {
+            bool toggled = configLock.Active;
+            if (toggled)
+            {
+                configLock.Label = "Writeable";
+                LockConfigWidgets(false);
+            }
+            else
+            {
+                configLock.Label = "Readonly";
+                LockConfigWidgets();
+            }
         }
         private void OnConfigNameChange(object obj, EventArgs args)
         {
