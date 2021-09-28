@@ -75,7 +75,9 @@ namespace SimpleBackup.InterfaceGtk.Views
             configVersionsToKeepSpinner = new(0, 100, 1);
             configVersionsToKeepSpinner.ValueChanged += OnVersionsToKeepChange;
             includedPathsBnt = new("Included Paths");
+            includedPathsBnt.Clicked += OnIncludeClick;
             excludedPathsBnt = new("Excluded Paths");
+            excludedPathsBnt.Clicked += OnExcludeClick;
             startBackup = new("Start");
 
             mainBox.PackStart(menuBar, false, false, 0);
@@ -219,6 +221,38 @@ namespace SimpleBackup.InterfaceGtk.Views
         {
             QuickConfig.AppConfig.BackupConfigs[currConfigI].VersionsToKeep = configVersionsToKeepSpinner.ValueAsInt;
             QuickConfig.Write();
+        }
+        private void OnIncludeClick(object obj, EventArgs args)
+        {
+            ListManager dialog = new(
+                this,
+                "Included Paths",
+                "Modify Or View The Included Paths",
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].IncludedPaths
+            );
+            var response = dialog.Run();
+            if (response == ((int)ResponseType.Ok))
+            {
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].IncludedPaths = dialog.Choices;
+                QuickConfig.Write();
+            }
+            dialog.Destroy();
+        }
+        private void OnExcludeClick(object obj, EventArgs args)
+        {
+            ListManager dialog = new(
+                this,
+                "Excluded Paths",
+                "Modify Or View The Excluded Paths",
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].ExcludedPaths
+            );
+            var response = dialog.Run();
+            if (response == ((int)ResponseType.Ok))
+            {
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].ExcludedPaths = dialog.Choices;
+                QuickConfig.Write();
+            }
+            dialog.Destroy();
         }
         #endregion
     }
