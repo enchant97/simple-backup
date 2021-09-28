@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Gtk.Extensions\Gtk.Extensions.csproj" />
     <ProjectReference Include="..\SimpleBackup.Core\SimpleBackup.Core.csproj" />
   </ItemGroup>
 

@@ -1,8 +1,6 @@
-using Gtk;
-
-namespace SimpleBackup.InterfaceGtk.Views
+namespace Gtk.Extensions.Popup
 {
-    class AskChoice : Dialog
+    public class AskChoice : Dialog
     {
         private readonly ComboBox comboBox;
         public AskChoice(Window parent, string title, string caption, string[] choices) : base(title, parent, 0)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Gtk;
+using Gtk.Extensions.Popup;
 using SimpleBackup.Core;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;

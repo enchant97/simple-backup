@@ -1,8 +1,6 @@
-using Gtk;
-
-namespace SimpleBackup.InterfaceGtk.Views
+namespace Gtk.Extensions.Popup
 {
-    class AskTextInput : Dialog
+    public class AskTextInput : Dialog
     {
         private readonly Entry entry;
         public AskTextInput(Window parent, string title, string caption, string placeholder = "") : base(title, parent, 0)
