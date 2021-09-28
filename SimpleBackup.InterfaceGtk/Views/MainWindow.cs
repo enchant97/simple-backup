@@ -132,7 +132,7 @@ namespace SimpleBackup.InterfaceGtk.Views
         private void RunBackup()
         {
             // TODO move gui & event handlers outside method
-            statusBar.Push(0, "Backup Starting");
+            Application.Invoke(delegate { statusBar.Push(0, "Backup Starting"); });
             BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[currConfigI];
             string backupDstPath = Paths.GenerateBackupName(currConfig.DestinationPath);
             int foundCount = 0;
@@ -150,26 +150,26 @@ namespace SimpleBackup.InterfaceGtk.Views
             backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) =>
             {
                 foundCount++;
-                statusBar.Push(0, string.Format("Found: {0}", foundCount));
+                Application.Invoke(delegate { statusBar.Push(0, string.Format("Found: {0}", foundCount)); });
             };
             backupHandler.CopyEvent += (object sender, BackupHandlerEventArgs args) =>
             {
                 copiedCount++;
-                statusBar.Push(0, string.Format("Copied: {0}/{1}", copiedCount, foundCount));
+                Application.Invoke(delegate { statusBar.Push(0, string.Format("Copied: {0}/{1}", copiedCount, foundCount)); });
             };
 
             backupHandler.Start();
 
             if (currConfig.VersionsToKeep > 0)
             {
-                statusBar.Push(0, "Removing old backups");
+                Application.Invoke(delegate { statusBar.Push(0, "Removing old backups"); });
                 int backupsRemoved = Cleaning.RemovePreviousBackups(
                     currConfig.VersionsToKeep,
                     currConfig.DestinationPath
                 );
             }
 
-            statusBar.Push(0, "Backup Finished");
+            Application.Invoke(delegate { statusBar.Push(0, "Backup Finished"); });
             backupThread = null;
         }
         #region Events
