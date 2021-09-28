@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Linq;
 using Gtk;
 using Gtk.Extensions.Popup;
 using SimpleBackup.Core;
+using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
 
@@ -14,12 +16,14 @@ namespace SimpleBackup.InterfaceGtk.Views
         #region Fields
         private int currConfigI;
         private readonly ToggleButton configLock;
+        private Thread backupThread;
         private readonly Entry configName;
         private readonly Label configLastBackup;
         private readonly SpinButton configVersionsToKeepSpinner;
         private readonly Button includedPathsBnt;
         private readonly Button excludedPathsBnt;
         private readonly Button startBackup;
+        private readonly Statusbar statusBar;
         #endregion
         public MainWindow() : base(Constants.AppName + " - GUI Mode")
         {
@@ -79,6 +83,8 @@ namespace SimpleBackup.InterfaceGtk.Views
             excludedPathsBnt = new("Excluded Paths");
             excludedPathsBnt.Clicked += OnExcludeClick;
             startBackup = new("Start");
+            startBackup.Clicked += OnStartBackupClicked;
+            statusBar = new();
 
             mainBox.PackStart(menuBar, false, false, 0);
             mainBox.PackStart(title, false, false, 14);
@@ -90,6 +96,8 @@ namespace SimpleBackup.InterfaceGtk.Views
             mainBox.PackStart(includedPathsBnt, false, false, 0);
             mainBox.PackStart(excludedPathsBnt, false, false, 0);
             mainBox.PackStart(startBackup, false, false, 0);
+            mainBox.PackEnd(statusBar, false, false, 0);
+
             Add(mainBox);
 
             LoadConfigWidgets(QuickConfig.AppConfig.DefaultConfigI);
@@ -111,6 +119,49 @@ namespace SimpleBackup.InterfaceGtk.Views
             includedPathsBnt.Sensitive = locked;
             excludedPathsBnt.Sensitive = locked;
             startBackup.Sensitive = !locked;
+        }
+        private void RunBackup()
+        {
+            // TODO move gui & event handlers outside method
+            statusBar.Push(0, "Backup Starting");
+            BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[currConfigI];
+            string backupDstPath = Paths.GenerateBackupName(currConfig.DestinationPath);
+            int foundCount = 0;
+            int copiedCount = 0;
+
+            BackupHandler backupHandler = new(
+                backupDstPath,
+                currConfig.IncludedPaths,
+                currConfig.ExcludedPaths,
+                QuickConfig.AppConfig.ExcludedFilenames,
+                false
+            );
+
+            // setup events
+            backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) =>
+            {
+                foundCount++;
+                statusBar.Push(0, string.Format("Found: {0}", foundCount));
+            };
+            backupHandler.CopyEvent += (object sender, BackupHandlerEventArgs args) =>
+            {
+                copiedCount++;
+                statusBar.Push(0, string.Format("Copied: {0}/{1}", copiedCount, foundCount));
+            };
+
+            backupHandler.Start();
+
+            if (currConfig.VersionsToKeep > 0)
+            {
+                statusBar.Push(0, "Removing old backups");
+                int backupsRemoved = Cleaning.RemovePreviousBackups(
+                    currConfig.VersionsToKeep,
+                    currConfig.DestinationPath
+                );
+            }
+
+            statusBar.Push(0, "Backup Finished");
+            backupThread = null;
         }
         #region Events
         private void OnQuit(object obj, EventArgs args)
@@ -253,6 +304,21 @@ namespace SimpleBackup.InterfaceGtk.Views
                 QuickConfig.Write();
             }
             dialog.Destroy();
+        }
+        private void OnStartBackupClicked(object obj, EventArgs args)
+        {
+            // TODO show error message instead of returning
+            //  make sure no backup is running
+            if (backupThread != null) return;
+
+            // make sure the backup config has all the details
+            BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[currConfigI];
+
+            if (string.IsNullOrWhiteSpace(currConfig.DestinationPath)) return;
+
+            // start backup thread
+            backupThread = new(RunBackup);
+            backupThread.Start();
         }
         #endregion
     }
