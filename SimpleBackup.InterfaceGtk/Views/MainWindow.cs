@@ -17,11 +17,13 @@ namespace SimpleBackup.InterfaceGtk.Views
         private int currConfigI;
         private readonly ToggleButton configLock;
         private Thread backupThread;
-        private readonly Entry configName;
+        private readonly Label configNameLabel;
         private readonly Label configLastBackup;
         private readonly SpinButton configVersionsToKeepSpinner;
         private readonly Button includedPathsBnt;
         private readonly Button excludedPathsBnt;
+        private readonly Label destPathLabel;
+        private readonly Button destPathBnt;
         private readonly Button startBackup;
         private readonly Statusbar statusBar;
         #endregion
@@ -48,6 +50,8 @@ namespace SimpleBackup.InterfaceGtk.Views
             mConfigLoad.Activated += OnConfigLoad;
             MenuItem mConfigChangeDefault = new("Change Default");
             mConfigChangeDefault.Activated += OnConfigChangeDefault;
+            MenuItem mConfigRenameCurrent = new("Rename Current");
+            mConfigRenameCurrent.Activated += OnConfigNameChange;
             MenuItem mConfigDeleteCurrent = new("Delete Current");
             mConfigDeleteCurrent.Activated += OnConfigDeleteCurrent;
             MenuItem mConfigResetAll = new("Reset All");
@@ -62,6 +66,7 @@ namespace SimpleBackup.InterfaceGtk.Views
             config.Append(mConfigLoad);
             config.Append(mConfigChangeDefault);
             config.Append(mConfigDeleteCurrent);
+            config.Append(mConfigRenameCurrent);
             config.Append(mConfigResetAll);
             help.Append(mAbout);
             menuBar.Append(mFile);
@@ -71,9 +76,7 @@ namespace SimpleBackup.InterfaceGtk.Views
             Label title = new(Constants.AppName + " - GUI MODE");
             configLock = new("Readonly");
             configLock.Clicked += OnConfigLockToggle;
-            configName = new();
-            configName.TextDeleted += OnConfigNameChange;
-            configName.TextInserted += OnConfigNameChange;
+            configNameLabel = new();
             configLastBackup = new();
             Label configVersionsToKeepLabel = new("Version To Keep");
             configVersionsToKeepSpinner = new(0, 100, 1);
@@ -82,6 +85,9 @@ namespace SimpleBackup.InterfaceGtk.Views
             includedPathsBnt.Clicked += OnIncludeClick;
             excludedPathsBnt = new("Excluded Paths");
             excludedPathsBnt.Clicked += OnExcludeClick;
+            destPathLabel = new();
+            destPathBnt = new("Change Backup Destination");
+            destPathBnt.Clicked += OnChangeDestClick;
             startBackup = new("Start");
             startBackup.Clicked += OnStartBackupClicked;
             statusBar = new();
@@ -89,12 +95,14 @@ namespace SimpleBackup.InterfaceGtk.Views
             mainBox.PackStart(menuBar, false, false, 0);
             mainBox.PackStart(title, false, false, 14);
             mainBox.PackStart(configLock, false, false, 0);
-            mainBox.PackStart(configName, false, false, 0);
+            mainBox.PackStart(configNameLabel, false, false, 0);
             mainBox.PackStart(configLastBackup, false, false, 0);
             mainBox.PackStart(configVersionsToKeepLabel, false, false, 0);
             mainBox.PackStart(configVersionsToKeepSpinner, false, false, 0);
             mainBox.PackStart(includedPathsBnt, false, false, 0);
             mainBox.PackStart(excludedPathsBnt, false, false, 0);
+            mainBox.PackStart(destPathLabel, false, false, 0);
+            mainBox.PackStart(destPathBnt, false, false, 0);
             mainBox.PackStart(startBackup, false, false, 0);
             mainBox.PackEnd(statusBar, false, false, 0);
 
@@ -107,17 +115,18 @@ namespace SimpleBackup.InterfaceGtk.Views
         {
             currConfigI = configIndex;
             var loadedConfig = QuickConfig.AppConfig.BackupConfigs[configIndex];
-            configName.Text = loadedConfig.Name;
-            configLastBackup.Text = loadedConfig.LastBackup.ToString();
+            configNameLabel.Text = string.Format("Config Name: {0}", loadedConfig.Name);
+            configLastBackup.Text = string.Format("Last Known Backup: {0}", loadedConfig.LastBackup.ToString());
             configVersionsToKeepSpinner.Value = loadedConfig.VersionsToKeep;
+            destPathLabel.Text = loadedConfig.DestinationPath;
         }
         private void LockConfigWidgets(bool locked = true)
         {
             locked = !locked;
-            configName.Sensitive = locked;
             configVersionsToKeepSpinner.Sensitive = locked;
             includedPathsBnt.Sensitive = locked;
             excludedPathsBnt.Sensitive = locked;
+            destPathBnt.Sensitive = locked;
             startBackup.Sensitive = !locked;
         }
         private void RunBackup()
@@ -265,8 +274,18 @@ namespace SimpleBackup.InterfaceGtk.Views
         }
         private void OnConfigNameChange(object obj, EventArgs args)
         {
-            QuickConfig.AppConfig.BackupConfigs[currConfigI].Name = configName.Text;
-            QuickConfig.Write();
+            AskTextInput dialog = new(this, "Rename Config", "Enter A New Name For The New Config");
+            var response = dialog.Run();
+            if (response == ((int)ResponseType.Ok))
+            {
+                if (!string.IsNullOrEmpty(dialog.Input))
+                {
+                    QuickConfig.AppConfig.BackupConfigs[currConfigI].Name = dialog.Input;
+                    QuickConfig.Write();
+                    LoadConfigWidgets(currConfigI);
+                }
+            }
+            dialog.Destroy();
         }
         private void OnVersionsToKeepChange(object obj, EventArgs args)
         {
@@ -302,6 +321,24 @@ namespace SimpleBackup.InterfaceGtk.Views
             {
                 QuickConfig.AppConfig.BackupConfigs[currConfigI].ExcludedPaths = dialog.Choices;
                 QuickConfig.Write();
+            }
+            dialog.Destroy();
+        }
+        private void OnChangeDestClick(object obj, EventArgs args)
+        {
+            FileChooserDialog dialog = new(
+                "Choice Backup Destination",
+                this,
+                FileChooserAction.SelectFolder,
+                "Cancel", ResponseType.Cancel,
+                "Select", ResponseType.Ok
+            );
+            var response = dialog.Run();
+            if (response == ((int)ResponseType.Ok))
+            {
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].DestinationPath = dialog.Filename;
+                QuickConfig.Write();
+                LoadConfigWidgets(currConfigI);
             }
             dialog.Destroy();
         }
