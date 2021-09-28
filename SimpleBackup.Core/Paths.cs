@@ -28,6 +28,14 @@ namespace SimpleBackup.Core
             return backupName;
         }
         /// <summary>
+        /// Generate a backname and join with root path
+        /// </summary>
+        /// <param name="rootPath">The root directory to join</param>
+        public static string GenerateBackupName(string rootPath)
+        {
+            return Path.Join(rootPath, GenerateBackupName());
+        }
+        /// <summary>
         /// Generate a backname with backup type
         /// </summary>
         public static string GenerateBackupName(Constants.BackupType backupType)

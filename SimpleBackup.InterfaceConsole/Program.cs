@@ -406,10 +406,7 @@ namespace SimpleBackup.InterfaceConsole
             }
 
             BackupConfig selectedBackupConfig = QuickConfig.AppConfig.BackupConfigs[selectedBackupConfigI];
-            string backupDstPath = Path.Join(
-                selectedBackupConfig.DestinationPath,
-                Paths.GenerateBackupName()
-            );
+            string backupDstPath = Paths.GenerateBackupName(selectedBackupConfig.DestinationPath);
             int foundCount = 0;
             int copiedCount = 0;
 
