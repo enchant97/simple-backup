@@ -65,8 +65,9 @@ namespace SimpleBackup.InterfaceGtk.Views
             config.Append(mConfigNew);
             config.Append(mConfigLoad);
             config.Append(mConfigChangeDefault);
-            config.Append(mConfigDeleteCurrent);
             config.Append(mConfigRenameCurrent);
+            config.Append(new SeparatorMenuItem());
+            config.Append(mConfigDeleteCurrent);
             config.Append(mConfigResetAll);
             help.Append(mAbout);
             menuBar.Append(mFile);
@@ -351,7 +352,11 @@ namespace SimpleBackup.InterfaceGtk.Views
             // make sure the backup config has all the details
             BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[currConfigI];
 
-            if (string.IsNullOrWhiteSpace(currConfig.DestinationPath)) return;
+            if (string.IsNullOrWhiteSpace(currConfig.DestinationPath))
+            {
+                Alerts.ShowError(this, "Destination path has not been set!");
+                return;
+            }
 
             // start backup thread
             backupThread = new(RunBackup);
