@@ -294,7 +294,7 @@ namespace SimpleBackup.InterfaceGtk.Views
         }
         private void OnIncludeClick(object obj, EventArgs args)
         {
-            ListManager dialog = new(
+            DirectoryListManager dialog = new(
                 this,
                 "Included Paths",
                 "Modify Or View The Included Paths",
@@ -310,7 +310,7 @@ namespace SimpleBackup.InterfaceGtk.Views
         }
         private void OnExcludeClick(object obj, EventArgs args)
         {
-            ListManager dialog = new(
+            DirectoryListManager dialog = new(
                 this,
                 "Excluded Paths",
                 "Modify Or View The Excluded Paths",
