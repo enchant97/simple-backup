@@ -15,7 +15,6 @@ namespace SimpleBackup.InterfaceGtk.Views
     {
         #region Fields
         private int currConfigI;
-        private readonly ToggleButton configLock;
         private Thread backupThread;
         private readonly Label configNameLabel;
         private readonly Label configLastBackup;
@@ -25,7 +24,10 @@ namespace SimpleBackup.InterfaceGtk.Views
         private readonly Label destPathLabel;
         private readonly Button destPathBnt;
         private readonly Button startBackup;
+        private readonly ProgressBar progressBar;
         private readonly Statusbar statusBar;
+        public int FoundCount { get; private set; }
+        public int CopiedCount { get; private set; }
         #endregion
         public MainWindow() : base(Constants.AppName + " - GUI Mode")
         {
@@ -75,8 +77,6 @@ namespace SimpleBackup.InterfaceGtk.Views
             menuBar.Append(mHelp);
 
             Label title = new(Constants.AppName + " - GUI MODE");
-            configLock = new("Readonly");
-            configLock.Clicked += OnConfigLockToggle;
             configNameLabel = new();
             configLastBackup = new();
             Label configVersionsToKeepLabel = new("Version To Keep");
@@ -91,11 +91,11 @@ namespace SimpleBackup.InterfaceGtk.Views
             destPathBnt.Clicked += OnChangeDestClick;
             startBackup = new("Start");
             startBackup.Clicked += OnStartBackupClicked;
+            progressBar = new();
             statusBar = new();
 
             mainBox.PackStart(menuBar, false, false, 0);
             mainBox.PackStart(title, false, false, 14);
-            mainBox.PackStart(configLock, false, false, 0);
             mainBox.PackStart(configNameLabel, false, false, 0);
             mainBox.PackStart(configLastBackup, false, false, 0);
             mainBox.PackStart(configVersionsToKeepLabel, false, false, 0);
@@ -105,12 +105,12 @@ namespace SimpleBackup.InterfaceGtk.Views
             mainBox.PackStart(destPathLabel, false, false, 0);
             mainBox.PackStart(destPathBnt, false, false, 0);
             mainBox.PackStart(startBackup, false, false, 0);
+            mainBox.PackEnd(progressBar, false, false, 0);
             mainBox.PackEnd(statusBar, false, false, 0);
 
             Add(mainBox);
 
             LoadConfigWidgets(QuickConfig.AppConfig.DefaultConfigI);
-            LockConfigWidgets();
         }
         private void LoadConfigWidgets(int configIndex)
         {
@@ -121,23 +121,53 @@ namespace SimpleBackup.InterfaceGtk.Views
             configVersionsToKeepSpinner.Value = loadedConfig.VersionsToKeep;
             destPathLabel.Text = loadedConfig.DestinationPath;
         }
-        private void LockConfigWidgets(bool locked = true)
+        private void LockWidgets(bool locked = true)
         {
             locked = !locked;
             configVersionsToKeepSpinner.Sensitive = locked;
             includedPathsBnt.Sensitive = locked;
             excludedPathsBnt.Sensitive = locked;
             destPathBnt.Sensitive = locked;
-            startBackup.Sensitive = !locked;
+            startBackup.Sensitive = locked;
+        }
+        private void HandleBackupStart()
+        {
+            LockWidgets();
+            statusBar.Push(0, "Backup Starting");
+            FoundCount = 0;
+            CopiedCount = 0;
+        }
+        private void HandleBackupDiscovery()
+        {
+            FoundCount++;
+            progressBar.Pulse();
+            statusBar.Push(0, string.Format("Found: {0}", FoundCount));
+        }
+        private void HandleBackupCopied()
+        {
+            CopiedCount++;
+            progressBar.Pulse();
+            statusBar.Push(0, string.Format("Copied: {0}/{1}", CopiedCount, FoundCount));
+        }
+        private void HandleBackupClean()
+        {
+            progressBar.Pulse();
+            statusBar.Push(0, "Removing old backups");
+        }
+        private void HandleBackupFinished()
+        {
+            LockWidgets(false);
+            progressBar.Fraction = 0;
+            statusBar.Push(0, "Backup Finished");
+            backupThread = null;
         }
         private void RunBackup()
         {
-            // TODO move gui & event handlers outside method
-            Application.Invoke(delegate { statusBar.Push(0, "Backup Starting"); });
+            // TODO handle finished event in BackupHandler
+            // TODO handle error events in BackupHandler
+            Application.Invoke(delegate { HandleBackupStart(); });
             BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[currConfigI];
             string backupDstPath = Paths.GenerateBackupName(currConfig.DestinationPath);
-            int foundCount = 0;
-            int copiedCount = 0;
 
             BackupHandler backupHandler = new(
                 backupDstPath,
@@ -150,28 +180,24 @@ namespace SimpleBackup.InterfaceGtk.Views
             // setup events
             backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) =>
             {
-                foundCount++;
-                Application.Invoke(delegate { statusBar.Push(0, string.Format("Found: {0}", foundCount)); });
+                Application.Invoke(delegate { HandleBackupDiscovery(); });
             };
             backupHandler.CopyEvent += (object sender, BackupHandlerEventArgs args) =>
             {
-                copiedCount++;
-                Application.Invoke(delegate { statusBar.Push(0, string.Format("Copied: {0}/{1}", copiedCount, foundCount)); });
+                Application.Invoke(delegate { HandleBackupCopied(); });
             };
 
             backupHandler.Start();
 
             if (currConfig.VersionsToKeep > 0)
             {
-                Application.Invoke(delegate { statusBar.Push(0, "Removing old backups"); });
+                Application.Invoke(delegate { HandleBackupClean(); });
                 int backupsRemoved = Cleaning.RemovePreviousBackups(
                     currConfig.VersionsToKeep,
                     currConfig.DestinationPath
                 );
             }
-
-            Application.Invoke(delegate { statusBar.Push(0, "Backup Finished"); });
-            backupThread = null;
+            Application.Invoke(delegate { HandleBackupFinished(); });
         }
         #region Events
         private void OnQuit(object obj, EventArgs args)
@@ -258,20 +284,6 @@ namespace SimpleBackup.InterfaceGtk.Views
         {
             QuickConfig.Reset();
             LoadConfigWidgets(QuickConfig.AppConfig.DefaultConfigI);
-        }
-        private void OnConfigLockToggle(object obj, EventArgs args)
-        {
-            bool toggled = configLock.Active;
-            if (toggled)
-            {
-                configLock.Label = "Writeable";
-                LockConfigWidgets(false);
-            }
-            else
-            {
-                configLock.Label = "Readonly";
-                LockConfigWidgets();
-            }
         }
         private void OnConfigNameChange(object obj, EventArgs args)
         {
