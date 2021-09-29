@@ -445,6 +445,10 @@ namespace SimpleBackup.InterfaceConsole
                 Console.WriteLine("Removed {0} Backups", backupsRemoved);
             }
 
+            // write backup timestamp
+            QuickConfig.AppConfig.BackupConfigs[selectedBackupConfigI].LastBackup = DateTime.UtcNow;
+            QuickConfig.Write();
+
             Console.Clear();
             Utils.ShowHeader();
             Console.WriteLine("FINISHED\n");

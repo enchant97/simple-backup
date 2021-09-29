@@ -156,6 +156,11 @@ namespace SimpleBackup.InterfaceGtk.Views
         }
         private void HandleBackupFinished()
         {
+            // write backup timestamp
+            QuickConfig.AppConfig.BackupConfigs[currConfigI].LastBackup = DateTime.UtcNow;
+            QuickConfig.Write();
+            LoadConfigWidgets(currConfigI);
+
             LockWidgets(false);
             progressBar.Fraction = 0;
             statusBar.Push(0, "Backup Finished");
