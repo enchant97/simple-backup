@@ -23,6 +23,7 @@ namespace SimpleBackup.InterfaceGtk.Views
         private readonly Button excludedPathsBnt;
         private readonly Label destPathLabel;
         private readonly Button destPathBnt;
+        private readonly Button changeBackupTypeBnt;
         private readonly Button startBackup;
         private readonly ProgressBar progressBar;
         private readonly Statusbar statusBar;
@@ -89,6 +90,8 @@ namespace SimpleBackup.InterfaceGtk.Views
             destPathLabel = new();
             destPathBnt = new("Change Backup Destination");
             destPathBnt.Clicked += OnChangeDestClick;
+            changeBackupTypeBnt = new();
+            changeBackupTypeBnt.Clicked += OnChangeBackupTypeClicked;
             startBackup = new("Start");
             startBackup.Clicked += OnStartBackupClicked;
             progressBar = new();
@@ -104,6 +107,7 @@ namespace SimpleBackup.InterfaceGtk.Views
             mainBox.PackStart(excludedPathsBnt, false, false, 0);
             mainBox.PackStart(destPathLabel, false, false, 0);
             mainBox.PackStart(destPathBnt, false, false, 0);
+            mainBox.PackStart(changeBackupTypeBnt, false, false, 0);
             mainBox.PackStart(startBackup, false, false, 0);
             mainBox.PackEnd(progressBar, false, false, 0);
             mainBox.PackEnd(statusBar, false, false, 0);
@@ -120,6 +124,8 @@ namespace SimpleBackup.InterfaceGtk.Views
             configLastBackup.Text = string.Format("Last Known Backup: {0}", loadedConfig.LastBackup.ToString());
             configVersionsToKeepSpinner.Value = loadedConfig.VersionsToKeep;
             destPathLabel.Text = loadedConfig.DestinationPath;
+            string backupTypeName = Enum.GetName<Constants.BackupType>(loadedConfig.BackupType);
+            changeBackupTypeBnt.Label = string.Format("Change Backup Type ({0})", backupTypeName);
         }
         private void LockWidgets(bool locked = true)
         {
@@ -172,13 +178,17 @@ namespace SimpleBackup.InterfaceGtk.Views
             // TODO handle error events in BackupHandler
             Application.Invoke(delegate { HandleBackupStart(); });
             BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[currConfigI];
-            string backupDstPath = Paths.GenerateBackupName(currConfig.DestinationPath);
+            string backupDstPath = Paths.GenerateBackupName(
+                currConfig.DestinationPath,
+                currConfig.BackupType
+            );
 
             BackupHandler backupHandler = new(
                 backupDstPath,
                 currConfig.IncludedPaths,
                 currConfig.ExcludedPaths,
                 QuickConfig.AppConfig.ExcludedFilenames,
+                currConfig.BackupType,
                 false
             );
 
@@ -357,6 +367,23 @@ namespace SimpleBackup.InterfaceGtk.Views
                 QuickConfig.AppConfig.BackupConfigs[currConfigI].DestinationPath = dialog.Filename;
                 QuickConfig.Write();
                 LoadConfigWidgets(currConfigI);
+            }
+            dialog.Destroy();
+        }
+        private void OnChangeBackupTypeClicked(object obj, EventArgs args)
+        {
+            string[] choices = Enum.GetNames<Constants.BackupType>();
+            AskChoice dialog = new(this, "Choose Backup Type", "Select A Backup Type", choices);
+            var response = dialog.Run();
+            if (response == ((int)ResponseType.Ok))
+            {
+                if (dialog.SelectedI != -1)
+                {
+                    var newBackupTypeValue = Enum.Parse<Constants.BackupType>(choices[dialog.SelectedI]);
+                    QuickConfig.AppConfig.BackupConfigs[currConfigI].BackupType = newBackupTypeValue;
+                    QuickConfig.Write();
+                    LoadConfigWidgets(currConfigI);
+                }
             }
             dialog.Destroy();
         }

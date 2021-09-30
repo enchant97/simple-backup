@@ -40,6 +40,7 @@ namespace SimpleBackup.Core
         {
             FOLDER,
             ZIP,
+            ZIP_NO_COMPRESS,
         }
         /// <summary>
         /// Possible error types that could happen

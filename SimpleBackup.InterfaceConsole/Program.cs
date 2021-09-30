@@ -149,6 +149,38 @@ namespace SimpleBackup.InterfaceConsole
                 else { Utils.ShowError("Not A Valid Option"); }
             }
         }
+        static void InteractiveConfigsBackupTypeMenu(int configIndex)
+        {
+            string[] choices = Enum.GetNames<Constants.BackupType>();
+            int choicesLength = choices.Length;
+            while (true)
+            {
+                Console.Clear();
+                Utils.ShowHeader();
+                Console.WriteLine("CONFIG - {0} - BACKUP TYPE\n", QuickConfig.AppConfig.BackupConfigs[configIndex].Name);
+                for (int i = 0; i < choicesLength; i++)
+                {
+                    Console.WriteLine("\t({0}) -> {1}", i + 1, choices[i]);
+                }
+                Console.WriteLine("\t(Q)uit -> Go back");
+
+                string input = Utils.GetInput().ToLower();
+                bool isInt = int.TryParse(input, out int option);
+                if (input == "q")
+                {
+                    break;
+                }
+                else if (isInt && (option > 0 && option <= choicesLength))
+                {
+                    option--;
+                    var newBackupTypeValue = Enum.Parse<Constants.BackupType>(choices[option]);
+                    QuickConfig.AppConfig.BackupConfigs[configIndex].BackupType = newBackupTypeValue;
+                    QuickConfig.Write();
+                    break;
+                }
+                else { Utils.ShowError("Not A Valid Option"); }
+            }
+        }
         static void InteractiveConfigMenu(int configIndex)
         {
             while (true)
@@ -162,6 +194,7 @@ namespace SimpleBackup.InterfaceConsole
                 Console.WriteLine("\t(3) -> Included Paths = {0} Paths", selectedConfig.IncludedPaths.Length);
                 Console.WriteLine("\t(4) -> Excluded Paths = {0} Paths", selectedConfig.ExcludedPaths.Length);
                 Console.WriteLine("\t(5) -> Versions To Keep = {0}", selectedConfig.VersionsToKeep);
+                Console.WriteLine("\t(6) -> Backup Type = {0}", Enum.GetName<Constants.BackupType>(selectedConfig.BackupType));
                 Console.WriteLine("\t(R)ename -> Rename the config name");
                 Console.WriteLine("\t(D)elete -> Delete the config");
                 Console.WriteLine("\t(Q)uit -> Go back");
@@ -201,7 +234,7 @@ namespace SimpleBackup.InterfaceConsole
                         return;
                     }
                 }
-                else if (isInt && (option > 0 && option <= 5))
+                else if (isInt && (option > 0 && option <= 6))
                 {
                     if (option == 1)
                     {
@@ -240,6 +273,10 @@ namespace SimpleBackup.InterfaceConsole
                         selectedConfig.VersionsToKeep = Utils.ShowIntInput("Enter Updated Versions To Keep");
                         QuickConfig.AppConfig.BackupConfigs[configIndex] = selectedConfig;
                         QuickConfig.Write();
+                    }
+                    else if (option == 6)
+                    {
+                        InteractiveConfigsBackupTypeMenu(configIndex);
                     }
                 }
                 else { Utils.ShowError("Not A Valid Option"); }
@@ -419,11 +456,13 @@ namespace SimpleBackup.InterfaceConsole
             );
 
             // setup events
-            backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) => {
+            backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) =>
+            {
                 foundCount++;
                 ShowDiscoveringFiles(foundCount);
             };
-            backupHandler.CopyEvent += (object sender, BackupHandlerEventArgs args) => {
+            backupHandler.CopyEvent += (object sender, BackupHandlerEventArgs args) =>
+            {
                 copiedCount++;
                 ShowCopyingFiles(copiedCount, foundCount);
             };

@@ -113,7 +113,11 @@ namespace SimpleBackup.Core.Backup
                 using (ZipArchive archive = new(zipStream, ZipArchiveMode.Update))
                 {
                     string dstPath = Paths.CombineFullPath(fileName, "");
-                    archive.CreateEntryFromFile(fileName, dstPath);
+                    CompressionLevel compressionLevel = backupType switch {
+                        Constants.BackupType.ZIP_NO_COMPRESS => CompressionLevel.NoCompression,
+                        _ => CompressionLevel.Optimal,
+                    };
+                    archive.CreateEntryFromFile(fileName, dstPath, compressionLevel);
                 }
             }
         }
@@ -127,6 +131,7 @@ namespace SimpleBackup.Core.Backup
                         CopyAsDirectory(fileName);
                         break;
                     case Constants.BackupType.ZIP:
+                    case Constants.BackupType.ZIP_NO_COMPRESS:
                         CopyAsZip(fileName);
                         break;
                     default:

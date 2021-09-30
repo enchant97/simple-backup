@@ -38,17 +38,28 @@ namespace SimpleBackup.Core
         /// <summary>
         /// Generate a backname with backup type
         /// </summary>
+        /// <param name="backupType">The backup type</param>
         public static string GenerateBackupName(Constants.BackupType backupType)
         {
             string backupName = GenerateBackupName();
             switch (backupType)
             {
                 case Constants.BackupType.ZIP:
+                case Constants.BackupType.ZIP_NO_COMPRESS:
                     backupName = backupName + ".zip";
                     break;
 
             }
             return backupName;
+        }
+        /// <summary>
+        /// Generate a backname and join with root path
+        /// </summary>
+        /// <param name="rootPath">The root directory to join</param>
+        /// <param name="backupType">The backup type</param>
+        public static string GenerateBackupName(string rootPath, Constants.BackupType backupType)
+        {
+            return Path.Join(rootPath, GenerateBackupName(backupType));
         }
     }
 }
