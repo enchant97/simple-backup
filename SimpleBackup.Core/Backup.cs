@@ -1,16 +1,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.IO.Compression;
 
 namespace SimpleBackup.Core.Backup
 {
-    public enum ErrorTypes
-    {
-        UNHANDLED,
-        NOT_FOUND,
-        NOT_COPYABLE_TYPE,
-        NO_PERMISSION,
-    }
     #region Exceptions
     public class NoIsBackupInProgressException : Exception
     {
@@ -34,8 +28,8 @@ namespace SimpleBackup.Core.Backup
     }
     public class BackupHandlerErrorEventArgs : BackupHandlerEventArgs
     {
-        public ErrorTypes errorType { get; set; }
-        public BackupHandlerErrorEventArgs(string fullPath, ErrorTypes errorType) : base(fullPath)
+        public Constants.ErrorTypes errorType { get; set; }
+        public BackupHandlerErrorEventArgs(string fullPath, Constants.ErrorTypes errorType) : base(fullPath)
         {
             this.errorType = errorType;
         }
@@ -51,9 +45,19 @@ namespace SimpleBackup.Core.Backup
         private readonly string[] excludedPaths;
         private readonly string[] excludedRegexFilenames;
         private readonly string destinationPath;
+        private readonly Constants.BackupType backupType;
         private readonly bool pauseOnError;
+        /// <summary>
+        /// Check whether a backup is in progress
+        /// </summary>
         public bool IsBackupInProgress { get => isBackupInProgress; }
+        /// <summary>
+        /// Check whether the backup has been paused
+        /// </summary>
         public bool IsPaused { get => isPaused; }
+        /// <summary>
+        /// Check whether the paths to backup queue is empty
+        /// </summary>
         public bool IsPathQueueEmpty { get => pathsLeft.IsEmpty; }
         #endregion
         #region Private Methods
@@ -77,33 +81,57 @@ namespace SimpleBackup.Core.Backup
                     if (pauseOnError) { Pause(); }
                     if (ex is FileNotFoundException)
                     {
-                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, ErrorTypes.NOT_FOUND));
+                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NOT_FOUND));
                     }
                     else if (ex is IOException)
                     {
-                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, ErrorTypes.NOT_COPYABLE_TYPE));
+                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
                     }
                     else if (ex is UnauthorizedAccessException)
                     {
-                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, ErrorTypes.NO_PERMISSION));
+                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NO_PERMISSION));
                     }
                     else
                     {
-                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, ErrorTypes.UNHANDLED));
+                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.UNHANDLED));
                         throw;
                     }
                 }
             }
-
-
+        }
+        private void CopyAsDirectory(string fileName)
+        {
+            string fileDstPath = Paths.CombineFullPath(fileName, destinationPath);
+            Directory.CreateDirectory(Path.GetDirectoryName(fileDstPath));
+            File.Copy(fileName, fileDstPath);
+        }
+        private void CopyAsZip(string fileName)
+        {
+            // TODO rewrite using SharpZipLib
+            using (FileStream zipStream = File.Open(destinationPath, FileMode.OpenOrCreate))
+            {
+                using (ZipArchive archive = new(zipStream, ZipArchiveMode.Update))
+                {
+                    string dstPath = Paths.CombineFullPath(fileName, "");
+                    archive.CreateEntryFromFile(fileName, dstPath);
+                }
+            }
         }
         private void Copy(string fileName)
         {
             try
             {
-                string fileDstPath = Paths.CombineFullPath(fileName, destinationPath);
-                Directory.CreateDirectory(Path.GetDirectoryName(fileDstPath));
-                File.Copy(fileName, fileDstPath);
+                switch (backupType)
+                {
+                    case Constants.BackupType.FOLDER:
+                        CopyAsDirectory(fileName);
+                        break;
+                    case Constants.BackupType.ZIP:
+                        CopyAsZip(fileName);
+                        break;
+                    default:
+                        throw new Exception(string.Format("backup type '{0}' not supported", backupType.ToString()));
+                }
                 CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
             }
             catch (Exception ex)
@@ -111,26 +139,43 @@ namespace SimpleBackup.Core.Backup
                 if (pauseOnError) { Pause(); }
                 if (ex is FileNotFoundException)
                 {
-                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, ErrorTypes.NOT_FOUND));
+                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NOT_FOUND));
                 }
                 else if (ex is IOException)
                 {
-                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, ErrorTypes.NOT_COPYABLE_TYPE));
+                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
                 }
                 else if (ex is UnauthorizedAccessException)
                 {
-                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, ErrorTypes.NO_PERMISSION));
+                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NO_PERMISSION));
                 }
                 else
                 {
-                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, ErrorTypes.UNHANDLED));
+                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.UNHANDLED));
                     throw;
                 }
             }
         }
         #endregion
         #region Public Methods
-        ///<summary>Create a backup handler object</summary>
+        /// <summary>Create a backup handler object</summary>
+        public BackupHandler(
+            string destinationPath,
+            string[] includedPaths,
+            string[] excludedPaths,
+            string[] excludedRegexFilenames,
+            Constants.BackupType backupType,
+            bool pauseOnError)
+        {
+            this.destinationPath = destinationPath;
+            this.includedPaths = includedPaths;
+            this.excludedPaths = excludedPaths;
+            this.excludedRegexFilenames = excludedRegexFilenames;
+            this.backupType = backupType;
+            this.pauseOnError = pauseOnError;
+            pathsLeft = new();
+        }
+        /// <summary>Create a backup handler object</summary>
         public BackupHandler(
             string destinationPath,
             string[] includedPaths,
@@ -142,10 +187,11 @@ namespace SimpleBackup.Core.Backup
             this.includedPaths = includedPaths;
             this.excludedPaths = excludedPaths;
             this.excludedRegexFilenames = excludedRegexFilenames;
+            backupType = Constants.BackupType.FOLDER;
             this.pauseOnError = pauseOnError;
             pathsLeft = new();
         }
-        ///<summary>Start the backup</summary>
+        /// <summary>Start the backup</summary>
         public void Start()
         {
             // make sure a backup is not running when starting
@@ -161,6 +207,7 @@ namespace SimpleBackup.Core.Backup
             else
                 InitQueue();
 
+            // TODO use thread pool for copy (but make start method still block)
             // copy paths until finished or paused
             while (!IsPathQueueEmpty && !IsPaused)
             {
@@ -176,7 +223,7 @@ namespace SimpleBackup.Core.Backup
                 FinishedEvent?.Invoke(this, EventArgs.Empty);
             }
         }
-        ///<summary>Stop a ongoing backup remembering progress</summary>
+        /// <summary>Stop a ongoing backup remembering progress</summary>
         public void Pause()
         {
             if (!IsBackupInProgress)
@@ -184,7 +231,7 @@ namespace SimpleBackup.Core.Backup
             isPaused = true;
             PausedEvent?.Invoke(this, EventArgs.Empty);
         }
-        ///<summary>Stop a ongoing backup (will reset progress)</summary>
+        /// <summary>Stop a ongoing backup (will reset progress)</summary>
         public void Stop()
         {
             if (!IsBackupInProgress)
@@ -193,19 +240,19 @@ namespace SimpleBackup.Core.Backup
         }
         #endregion
         #region Events
-        ///<summary>Invoked when a path is discovered</summary>
+        /// <summary>Invoked when a path is discovered</summary>
         public event EventHandler<BackupHandlerEventArgs> DiscoveryEvent;
-        ///<summary>Invoked when a path has finished copying</summary>
+        /// <summary>Invoked when a path has finished copying</summary>
         public event EventHandler<BackupHandlerEventArgs> CopyEvent;
-        ///<summary>Invoked when discovery had a error</summary>
+        /// <summary>Invoked when discovery had a error</summary>
         public event EventHandler<BackupHandlerErrorEventArgs> ExceptionDiscoveringEvent;
-        ///<summary>Invoked when copy had a error</summary>
+        /// <summary>Invoked when copy had a error</summary>
         public event EventHandler<BackupHandlerErrorEventArgs> ExceptionCopyEvent;
-        ///<summary>Invoked when the backup is started</summary>
+        /// <summary>Invoked when the backup is started</summary>
         public event EventHandler StartedEvent;
-        ///<summary>Invoked when the backup has been paused</summary>
+        /// <summary>Invoked when the backup has been paused</summary>
         public event EventHandler PausedEvent;
-        ///<summary>Invoked when backup is finished</summary>
+        /// <summary>Invoked when backup is finished</summary>
         public event EventHandler FinishedEvent;
         #endregion
     }

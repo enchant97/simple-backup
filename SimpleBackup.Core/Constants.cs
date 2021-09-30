@@ -35,10 +35,22 @@ namespace SimpleBackup.Core
         public const string BackupNameDateTimeFormat = "yyyyMMddTHHmmssZ";
         public const string BackupNameFolderRegex = @"^SIMPLEBACKUP-\d{8}T\d{6}Z$";
         public const string BackupNameFileRegex = @"^SIMPLEBACKUP-\d{8}T\d{6}Z\.\S+$";
+        /// <summary>Possible backup types</summary>
         public enum BackupType
         {
             FOLDER,
             ZIP,
+        }
+        /// <summary>
+        /// Possible error types that could happen
+        /// while discovering/copy
+        /// </summary>
+        public enum ErrorTypes
+        {
+            UNHANDLED,
+            NOT_FOUND,
+            NOT_COPYABLE_TYPE,
+            NO_PERMISSION,
         }
     }
 }

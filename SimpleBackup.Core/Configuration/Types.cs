@@ -20,6 +20,7 @@ namespace SimpleBackup.Core.Configuration.Types
         public string[] IncludedPaths = { };
         public string[] ExcludedPaths = { };
         public int VersionsToKeep = 2;
+        public Constants.BackupType BackupType = Constants.BackupType.FOLDER;
         public DateTime LastBackup;
     }
 }
