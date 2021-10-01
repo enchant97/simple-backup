@@ -99,66 +99,100 @@ namespace SimpleBackup.Core.Backup
                 }
             }
         }
-        private void CopyAsDirectory(string fileName)
+        private void HandleExceptions(Exception exception, string fileName)
         {
-            string fileDstPath = Paths.CombineFullPath(fileName, destinationPath);
-            Directory.CreateDirectory(Path.GetDirectoryName(fileDstPath));
-            File.Copy(fileName, fileDstPath);
-        }
-        private void CopyAsZip(string fileName)
-        {
-            // TODO rewrite using SharpZipLib
-            using (FileStream zipStream = File.Open(destinationPath, FileMode.OpenOrCreate))
+            if (pauseOnError) { Pause(); }
+            if (exception is FileNotFoundException)
             {
-                using (ZipArchive archive = new(zipStream, ZipArchiveMode.Update))
-                {
-                    string dstPath = Paths.CombineFullPath(fileName, "");
-                    CompressionLevel compressionLevel = backupType switch {
-                        Constants.BackupType.ZIP_NO_COMPRESS => CompressionLevel.NoCompression,
-                        _ => CompressionLevel.Optimal,
-                    };
-                    archive.CreateEntryFromFile(fileName, dstPath, compressionLevel);
-                }
+                ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NOT_FOUND));
+            }
+            else if (exception is IOException)
+            {
+                ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
+            }
+            else if (exception is UnauthorizedAccessException)
+            {
+                ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NO_PERMISSION));
+            }
+            else
+            {
+                ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.UNHANDLED));
+                throw exception;
             }
         }
-        private void Copy(string fileName)
+        private void CopyAsDirectory()
+        {
+            string fileName = null;
+            try
+            {
+                while (!IsPathQueueEmpty && !IsPaused)
+                {
+                    bool isValid = pathsLeft.TryDequeue(out fileName);
+                    if (!isValid) { return; }
+
+                    string fileDstPath = Paths.CombineFullPath(fileName, destinationPath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(fileDstPath));
+                    File.Copy(fileName, fileDstPath);
+                    CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleExceptions(ex, fileName);
+            }
+        }
+        private void CopyAsZip()
+        {
+            // TODO rewrite using SharpZipLib
+            string fileName = null;
+            CompressionLevel compressionLevel = backupType switch
+            {
+                Constants.BackupType.ZIP_NO_COMPRESS => CompressionLevel.NoCompression,
+                _ => CompressionLevel.Optimal,
+            };
+            try
+            {
+                using (FileStream zipStream = File.Open(destinationPath, FileMode.OpenOrCreate))
+                {
+                    using (ZipArchive archive = new(zipStream, ZipArchiveMode.Update))
+                    {
+                        while (!IsPathQueueEmpty && !IsPaused)
+                        {
+                            bool isValid = pathsLeft.TryDequeue(out fileName);
+                            if (!isValid) { return; }
+                            string dstPath = Paths.CombineFullPath(fileName, "");
+                            archive.CreateEntryFromFile(fileName, dstPath, compressionLevel);
+                            CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleExceptions(ex, fileName);
+            }
+
+        }
+        private void StartCopy()
         {
             try
             {
                 switch (backupType)
                 {
                     case Constants.BackupType.FOLDER:
-                        CopyAsDirectory(fileName);
+                        CopyAsDirectory();
                         break;
                     case Constants.BackupType.ZIP:
                     case Constants.BackupType.ZIP_NO_COMPRESS:
-                        CopyAsZip(fileName);
+                        CopyAsZip();
                         break;
                     default:
                         throw new Exception(string.Format("backup type '{0}' not supported", backupType.ToString()));
                 }
-                CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
             }
             catch (Exception ex)
             {
-                if (pauseOnError) { Pause(); }
-                if (ex is FileNotFoundException)
-                {
-                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NOT_FOUND));
-                }
-                else if (ex is IOException)
-                {
-                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
-                }
-                else if (ex is UnauthorizedAccessException)
-                {
-                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NO_PERMISSION));
-                }
-                else
-                {
-                    ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.UNHANDLED));
-                    throw;
-                }
+                HandleExceptions(ex, null);
             }
         }
         #endregion
@@ -214,12 +248,7 @@ namespace SimpleBackup.Core.Backup
 
             // TODO use thread pool for copy (but make start method still block)
             // copy paths until finished or paused
-            while (!IsPathQueueEmpty && !IsPaused)
-            {
-                bool isValid = pathsLeft.TryDequeue(out string currPath);
-                if (isValid)
-                    Copy(currPath);
-            }
+            StartCopy();
 
             if (IsPathQueueEmpty)
             {
