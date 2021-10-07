@@ -5,36 +5,6 @@ using System.IO.Compression;
 
 namespace SimpleBackup.Core.Backup
 {
-    #region Exceptions
-    public class NoIsBackupInProgressException : Exception
-    {
-        public NoIsBackupInProgressException() : base() { }
-        public NoIsBackupInProgressException(string message) : base(message) { }
-    }
-    public class IsBackupInProgressException : Exception
-    {
-        public IsBackupInProgressException() : base() { }
-        public IsBackupInProgressException(string message) : base(message) { }
-    }
-    #endregion
-    #region EventArgs
-    public class BackupHandlerEventArgs : EventArgs
-    {
-        public string fullPath { get; set; }
-        public BackupHandlerEventArgs(string fullPath)
-        {
-            this.fullPath = fullPath;
-        }
-    }
-    public class BackupHandlerErrorEventArgs : BackupHandlerEventArgs
-    {
-        public Constants.ErrorTypes errorType { get; set; }
-        public BackupHandlerErrorEventArgs(string fullPath, Constants.ErrorTypes errorType) : base(fullPath)
-        {
-            this.errorType = errorType;
-        }
-    }
-    #endregion
     public class BackupHandler
     {
         #region Fields
