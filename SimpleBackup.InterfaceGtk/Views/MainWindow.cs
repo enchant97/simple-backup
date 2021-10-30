@@ -25,8 +25,10 @@ namespace SimpleBackup.InterfaceGtk.Views
         private readonly Button destPathBnt;
         private readonly Button changeBackupTypeBnt;
         private readonly Button startBackup;
+        private readonly Button showErrorsBnt;
         private readonly ProgressBar progressBar;
         private readonly Statusbar statusBar;
+        private readonly List<string> raisedErrors = new();
         public int FoundCount { get; private set; }
         public int CopiedCount { get; private set; }
         #endregion
@@ -94,6 +96,9 @@ namespace SimpleBackup.InterfaceGtk.Views
             changeBackupTypeBnt.Clicked += OnChangeBackupTypeClicked;
             startBackup = new("Start");
             startBackup.Clicked += OnStartBackupClicked;
+            showErrorsBnt = new("Show Errors (0)");
+            showErrorsBnt.Clicked += OnShowErrorsClicked;
+
             progressBar = new();
             statusBar = new();
 
@@ -109,6 +114,7 @@ namespace SimpleBackup.InterfaceGtk.Views
             mainBox.PackStart(destPathBnt, false, false, 0);
             mainBox.PackStart(changeBackupTypeBnt, false, false, 0);
             mainBox.PackStart(startBackup, false, false, 0);
+            mainBox.PackStart(showErrorsBnt, false, false, 0);
             mainBox.PackEnd(progressBar, false, false, 0);
             mainBox.PackEnd(statusBar, false, false, 0);
 
@@ -169,13 +175,31 @@ namespace SimpleBackup.InterfaceGtk.Views
 
             LockWidgets(false);
             progressBar.Fraction = 0;
-            statusBar.Push(0, "Backup Finished");
+            if (raisedErrors.Count > 0)
+                statusBar.Push(0, "Backup Finished (With Errors)");
+            else
+                statusBar.Push(0, "Backup Finished");
             backupThread = null;
+        }
+        private string ExceptionToString(BackupHandlerErrorEventArgs args)
+        {
+            string errorMsg = args.errorType switch
+            {
+                Constants.ErrorTypes.NO_PERMISSION => "No permission at",
+                Constants.ErrorTypes.NOT_COPYABLE_TYPE => "Not copyable type at",
+                Constants.ErrorTypes.NOT_FOUND => "Not found at",
+                _ => "Unhandled error at"
+
+            };
+            return string.Format("{0} '{1}'", errorMsg, args.fullPath);
+        }
+        private void HandleBackupException(BackupHandlerErrorEventArgs args)
+        {
+            raisedErrors.Add(ExceptionToString(args));
+            showErrorsBnt.Label = string.Format("Show Errors ({0})", raisedErrors.Count);
         }
         private void RunBackup()
         {
-            // TODO handle finished event in BackupHandler
-            // TODO handle error events in BackupHandler
             Application.Invoke(delegate { HandleBackupStart(); });
             BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[currConfigI];
             string backupDstPath = Paths.GenerateBackupName(
@@ -201,18 +225,27 @@ namespace SimpleBackup.InterfaceGtk.Views
             {
                 Application.Invoke(delegate { HandleBackupCopied(); });
             };
-
-            backupHandler.Start();
-
-            if (currConfig.VersionsToKeep > 0)
+            backupHandler.ExceptionDiscoveringEvent += (object sender, BackupHandlerErrorEventArgs args) =>
             {
-                Application.Invoke(delegate { HandleBackupClean(); });
-                int backupsRemoved = Cleaning.RemovePreviousBackups(
-                    currConfig.VersionsToKeep,
-                    currConfig.DestinationPath
-                );
-            }
-            Application.Invoke(delegate { HandleBackupFinished(); });
+                Application.Invoke(delegate { HandleBackupException(args); });
+            };
+            backupHandler.ExceptionCopyEvent += (object sender, BackupHandlerErrorEventArgs args) =>
+            {
+                Application.Invoke(delegate { HandleBackupException(args); });
+            };
+            backupHandler.FinishedEvent += (object sender, EventArgs args) =>
+            {
+                if (currConfig.VersionsToKeep > 0)
+                {
+                    Application.Invoke(delegate { HandleBackupClean(); });
+                    int backupsRemoved = Cleaning.RemovePreviousBackups(
+                        currConfig.VersionsToKeep,
+                        currConfig.DestinationPath
+                    );
+                }
+                Application.Invoke(delegate { HandleBackupFinished(); });
+            };
+            backupHandler.Start();
         }
         #region Events
         private void OnQuit(object obj, EventArgs args)
@@ -402,9 +435,21 @@ namespace SimpleBackup.InterfaceGtk.Views
                 return;
             }
 
+            raisedErrors.Clear();
+
             // start backup thread
             backupThread = new(RunBackup);
             backupThread.Start();
+        }
+        private void OnShowErrorsClicked(object obj, EventArgs args)
+        {
+            if (raisedErrors.Count == 0) {
+                Alerts.ShowInfo(this, "No Errors Logged");
+                return;
+            }
+            ShowMessages dialog = new(this, "Logged Errors", "List of logged errors", raisedErrors.ToArray());
+            dialog.Run();
+            dialog.Destroy();
         }
         #endregion
     }
