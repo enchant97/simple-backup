@@ -419,19 +419,39 @@ namespace SimpleBackup.InterfaceConsole
 
             }
         }
-        static void ShowDiscoveringFiles(int currCount)
+        static void ShowDiscoveringFiles(int currCount, int failedCount)
         {
             Console.Clear();
             Utils.ShowHeader();
             Console.WriteLine("DISCOVERING FILES\n");
             Console.WriteLine("Found: {0}", currCount);
+            Console.WriteLine("Failed: {0}/{1}", failedCount, failedCount);
         }
-        static void ShowCopyingFiles(int currCount, int maxCount)
+        static void ShowCopyingFiles(int currCount, int maxCount, int failedCount)
         {
             Console.Clear();
             Utils.ShowHeader();
             Console.WriteLine("COPYING FILES\n");
             Console.WriteLine("Copied: {0}/{1}", currCount, maxCount);
+            Console.WriteLine("Failed: {0}/{1}", failedCount, maxCount);
+        }
+        static void ShowFinishCopy(int failedDiscovery, int failedCopy)
+        {
+            Console.Clear();
+            Utils.ShowHeader();
+            Console.WriteLine("FINISHED\n");
+            if (failedCopy != 0 || failedDiscovery != 0)
+            {
+                Console.WriteLine("Backup Finished (With Errors)");
+                Console.WriteLine(
+                    "Could not discover {0}, could not copy {1}",
+                    failedDiscovery, failedCopy
+                );
+            }
+            else
+            {
+                Console.WriteLine("Backup Finished");
+            }
         }
         static void InteractiveBackup()
         {
@@ -449,6 +469,8 @@ namespace SimpleBackup.InterfaceConsole
             );
             int foundCount = 0;
             int copiedCount = 0;
+            int failedDiscovery = 0;
+            int failedCopy = 0;
 
             BackupHandler backupHandler = new(
                 backupDstPath,
@@ -463,13 +485,15 @@ namespace SimpleBackup.InterfaceConsole
             backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) =>
             {
                 foundCount++;
-                ShowDiscoveringFiles(foundCount);
+                ShowDiscoveringFiles(foundCount, failedDiscovery);
             };
             backupHandler.CopyEvent += (object sender, BackupHandlerEventArgs args) =>
             {
                 copiedCount++;
-                ShowCopyingFiles(copiedCount, foundCount);
+                ShowCopyingFiles(copiedCount, foundCount, failedCopy);
             };
+            backupHandler.ExceptionDiscoveringEvent += (object sender, BackupHandlerErrorEventArgs args) => { failedDiscovery++; };
+            backupHandler.ExceptionCopyEvent += (object sender, BackupHandlerErrorEventArgs args) => { failedCopy++; };
 
             // This does not currently run as a separate thread so it will block
             backupHandler.Start();
@@ -492,10 +516,7 @@ namespace SimpleBackup.InterfaceConsole
             QuickConfig.AppConfig.BackupConfigs[selectedBackupConfigI].LastBackup = DateTime.UtcNow;
             QuickConfig.Write();
 
-            Console.Clear();
-            Utils.ShowHeader();
-            Console.WriteLine("FINISHED\n");
-            Console.WriteLine("All Found Files Were Copied");
+            ShowFinishCopy(failedDiscovery, failedCopy);
             Utils.ShowResume();
         }
         static void InteractiveMode()
