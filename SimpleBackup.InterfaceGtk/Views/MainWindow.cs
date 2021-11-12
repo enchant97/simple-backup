@@ -8,6 +8,7 @@ using SimpleBackup.Core;
 using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
+using UI = Gtk.Builder.ObjectAttribute;
 
 namespace SimpleBackup.InterfaceGtk.Views
 {
@@ -16,118 +17,39 @@ namespace SimpleBackup.InterfaceGtk.Views
         #region Fields
         private int currConfigI;
         private Thread backupThread;
-        private readonly Label configNameLabel;
-        private readonly Label configLastBackup;
-        private readonly SpinButton configVersionsToKeepSpinner;
-        private readonly Button includedPathsBnt;
-        private readonly Button excludedPathsBnt;
-        private readonly Label destPathLabel;
-        private readonly Button destPathBnt;
-        private readonly Button changeBackupTypeBnt;
-        private readonly Button startBackup;
-        private readonly Button showErrorsBnt;
-        private readonly ProgressBar progressBar;
-        private readonly Statusbar statusBar;
+        [UI] protected readonly Label configNameLabel;
+        [UI] protected readonly Label configLastBackup;
+        [UI] protected readonly SpinButton configVersionsToKeepSpinner;
+        [UI] protected readonly Button includedPathsBnt;
+        [UI] protected readonly Button excludedPathsBnt;
+        [UI] protected readonly Label destPathLabel;
+        [UI] protected readonly Button destPathBnt;
+        [UI] protected readonly Button changeBackupTypeBnt;
+        [UI] protected readonly Button startBackup;
+        [UI] protected readonly Button showErrorsBnt;
+        [UI] protected readonly ProgressBar progressBar;
+        [UI] protected readonly Statusbar statusBar;
         private readonly List<string> raisedErrors = new();
         public int FoundCount { get; private set; }
         public int CopiedCount { get; private set; }
         #endregion
-        public MainWindow() : base(Constants.AppName + " - GUI Mode")
+        public MainWindow() : this(new Builder("SimpleBackup.InterfaceGtk.Assets.MainWindow.glade")) { }
+        private MainWindow(Builder builder) : base(builder.GetRawOwnedObject("MainWindow"))
         {
-            QuickConfig.Read();
+            builder.Autoconnect(this);
 
-            SetDefaultSize(400, 200);
             SetPosition(WindowPosition.Center);
             DeleteEvent += OnQuit;
 
-            VBox mainBox = new(false, 2);
-
-            MenuBar menuBar = new();
-            Menu file = new();
-            MenuItem mFile = new("File") { Submenu = file };
-            MenuItem mQuit = new("Quit");
-            mQuit.Activated += OnQuit;
-            Menu config = new();
-            MenuItem mConfig = new("Config") { Submenu = config };
-            MenuItem mConfigNew = new("New");
-            mConfigNew.Activated += OnConfigNew;
-            MenuItem mConfigLoad = new("Load");
-            mConfigLoad.Activated += OnConfigLoad;
-            MenuItem mConfigChangeDefault = new("Change Default");
-            mConfigChangeDefault.Activated += OnConfigChangeDefault;
-            MenuItem mConfigRenameCurrent = new("Rename Current");
-            mConfigRenameCurrent.Activated += OnConfigNameChange;
-            MenuItem mConfigDeleteCurrent = new("Delete Current");
-            mConfigDeleteCurrent.Activated += OnConfigDeleteCurrent;
-            MenuItem mConfigResetAll = new("Reset All");
-            mConfigResetAll.Activated += OnConfigResetAll;
-            Menu help = new();
-            MenuItem mHelp = new("Help") { Submenu = help };
-            MenuItem mAbout = new("About");
-            mAbout.Activated += OnAbout;
-
-            file.Append(mQuit);
-            config.Append(mConfigNew);
-            config.Append(mConfigLoad);
-            config.Append(mConfigChangeDefault);
-            config.Append(mConfigRenameCurrent);
-            config.Append(new SeparatorMenuItem());
-            config.Append(mConfigDeleteCurrent);
-            config.Append(mConfigResetAll);
-            help.Append(mAbout);
-            menuBar.Append(mFile);
-            menuBar.Append(mConfig);
-            menuBar.Append(mHelp);
-
-            Label title = new(Constants.AppName + " - GUI MODE");
-            configNameLabel = new();
-            configLastBackup = new();
-            Label configVersionsToKeepLabel = new("Version To Keep");
-            configVersionsToKeepSpinner = new(0, 100, 1);
-            configVersionsToKeepSpinner.ValueChanged += OnVersionsToKeepChange;
-            includedPathsBnt = new("Included Paths");
-            includedPathsBnt.Clicked += OnIncludeClick;
-            excludedPathsBnt = new("Excluded Paths");
-            excludedPathsBnt.Clicked += OnExcludeClick;
-            destPathLabel = new();
-            destPathBnt = new("Change Backup Destination");
-            destPathBnt.Clicked += OnChangeDestClick;
-            changeBackupTypeBnt = new();
-            changeBackupTypeBnt.Clicked += OnChangeBackupTypeClicked;
-            startBackup = new("Start");
-            startBackup.Clicked += OnStartBackupClicked;
-            showErrorsBnt = new("Show Errors (0)");
-            showErrorsBnt.Clicked += OnShowErrorsClicked;
-
-            progressBar = new();
-            statusBar = new();
-
-            mainBox.PackStart(menuBar, false, false, 0);
-            mainBox.PackStart(title, false, false, 14);
-            mainBox.PackStart(configNameLabel, false, false, 0);
-            mainBox.PackStart(configLastBackup, false, false, 0);
-            mainBox.PackStart(configVersionsToKeepLabel, false, false, 0);
-            mainBox.PackStart(configVersionsToKeepSpinner, false, false, 0);
-            mainBox.PackStart(includedPathsBnt, false, false, 0);
-            mainBox.PackStart(excludedPathsBnt, false, false, 0);
-            mainBox.PackStart(destPathLabel, false, false, 0);
-            mainBox.PackStart(destPathBnt, false, false, 0);
-            mainBox.PackStart(changeBackupTypeBnt, false, false, 0);
-            mainBox.PackStart(startBackup, false, false, 0);
-            mainBox.PackStart(showErrorsBnt, false, false, 0);
-            mainBox.PackEnd(progressBar, false, false, 0);
-            mainBox.PackEnd(statusBar, false, false, 0);
-
-            Add(mainBox);
-
+            QuickConfig.Read();
             LoadConfigWidgets(QuickConfig.AppConfig.DefaultConfigI);
         }
         private void LoadConfigWidgets(int configIndex)
         {
             currConfigI = configIndex;
             var loadedConfig = QuickConfig.AppConfig.BackupConfigs[configIndex];
-            configNameLabel.Text = string.Format("Config Name: {0}", loadedConfig.Name);
-            configLastBackup.Text = string.Format("Last Known Backup: {0}", loadedConfig.LastBackup.ToString());
+            configNameLabel.Text = loadedConfig.Name;
+            configLastBackup.Text = loadedConfig.LastBackup.ToString();
             configVersionsToKeepSpinner.Value = loadedConfig.VersionsToKeep;
             destPathLabel.Text = loadedConfig.DestinationPath;
             string backupTypeName = Enum.GetName<Constants.BackupType>(loadedConfig.BackupType);
@@ -443,7 +365,8 @@ namespace SimpleBackup.InterfaceGtk.Views
         }
         private void OnShowErrorsClicked(object obj, EventArgs args)
         {
-            if (raisedErrors.Count == 0) {
+            if (raisedErrors.Count == 0)
+            {
                 Alerts.ShowInfo(this, "No Errors Logged");
                 return;
             }

@@ -16,4 +16,8 @@
     <ProjectReference Include="..\SimpleBackup.Core\SimpleBackup.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\MainWindow.glade" />
+  </ItemGroup>
+
 </Project>
