@@ -37,7 +37,7 @@ namespace SimpleBackup.InterfaceGtk.Views
         private MainWindow(Builder builder) : base(builder.GetRawOwnedObject("MainWindow"))
         {
             builder.Autoconnect(this);
-
+            Icon = Program.SharedAppIcon;
             SetPosition(WindowPosition.Center);
             DeleteEvent += OnQuit;
 

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <ApplicationIcon />
+    <ApplicationIcon>Assets/Icon.ico</ApplicationIcon>
     <StartupObject />
   </PropertyGroup>
 
@@ -17,6 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\Icon.ico" />
+    <EmbeddedResource Include="Assets\Icon.svg" />
     <EmbeddedResource Include="Assets\MainWindow.glade" />
     <EmbeddedResource Include="Assets\AboutWindow.glade" />
     <EmbeddedResource Include="Assets\HelpWindow.glade" />

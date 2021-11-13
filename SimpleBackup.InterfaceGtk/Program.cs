@@ -5,6 +5,7 @@ namespace SimpleBackup.InterfaceGtk
 {
     class Program
     {
+        public static Gdk.Pixbuf SharedAppIcon = new(null, "SimpleBackup.InterfaceGtk.Assets.Icon.svg");
         public static Application App;
         public static Window MainWin;
         [STAThread]

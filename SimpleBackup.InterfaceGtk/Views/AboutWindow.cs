@@ -8,6 +8,7 @@ namespace SimpleBackup.InterfaceGtk.Views
         private AboutWindow(Builder builder) : base(builder.GetRawOwnedObject("AboutWindow"))
         {
             builder.Autoconnect(this);
+            Logo = Program.SharedAppIcon;
             AddButton(Stock.Close, ResponseType.Close);
         }
     }
