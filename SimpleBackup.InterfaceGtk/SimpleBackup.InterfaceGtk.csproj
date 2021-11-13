@@ -19,6 +19,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Assets\MainWindow.glade" />
     <EmbeddedResource Include="Assets\AboutWindow.glade" />
+    <EmbeddedResource Include="Assets\HelpWindow.glade" />
   </ItemGroup>
 
 </Project>

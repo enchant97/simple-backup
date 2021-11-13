@@ -174,6 +174,12 @@ namespace SimpleBackup.InterfaceGtk.Views
         {
             Application.Quit();
         }
+        private void OnHelp(object obj, EventArgs args)
+        {
+            HelpWindow helpWindow = new() { AttachedTo = this };
+            helpWindow.Run();
+            helpWindow.Destroy();
+        }
         private void OnAbout(object obj, EventArgs args)
         {
             AboutWindow aboutWindow = new() { AttachedTo = this };
