@@ -176,18 +176,9 @@ namespace SimpleBackup.InterfaceGtk.Views
         }
         private void OnAbout(object obj, EventArgs args)
         {
-            AboutDialog aboutDialog = new();
-            aboutDialog.ProgramName = Constants.AppName;
-            aboutDialog.Copyright = "GPL-3.0 (c) Leo Spratt";
-            aboutDialog.Comments = "Welcome to Simple Backup, here is some help to get you started:\n\n" +
-                                   "- You can do full-backups\n" +
-                                   "- You can include and exclude paths to backup\n" +
-                                   "- You can set versions of backups to keep\n" +
-                                   "- You can keep different configurations for backups\n" +
-                                   "- Once everything is configured you can backup with one command\n" +
-                                   "- All configs are stored in a xml file\n";
-            aboutDialog.Run();
-            aboutDialog.Destroy();
+            AboutWindow aboutWindow = new() { AttachedTo = this };
+            aboutWindow.Run();
+            aboutWindow.Destroy();
         }
         private void OnConfigNew(object obj, EventArgs args)
         {
