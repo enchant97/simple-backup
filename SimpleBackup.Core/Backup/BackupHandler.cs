@@ -8,7 +8,7 @@ namespace SimpleBackup.Core.Backup
     public class BackupHandler
     {
         #region Fields
-        private ConcurrentQueue<string> pathsLeft;
+        private readonly ConcurrentQueue<string> pathsLeft;
         private bool isBackupInProgress = false;
         private bool isPaused = false;
         private readonly string[] includedPaths;
@@ -43,33 +43,36 @@ namespace SimpleBackup.Core.Backup
                         if (IsPaused) { break; }
                         pathsLeft.Enqueue(foundFilePath);
                         DiscoveryEvent?.Invoke(this, new BackupHandlerEventArgs(foundFilePath));
-
                     }
                 }
                 catch (Exception ex)
                 {
-                    if (pauseOnError) { Pause(); }
-                    if (ex is FileNotFoundException)
-                    {
-                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NOT_FOUND));
-                    }
-                    else if (ex is IOException)
-                    {
-                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
-                    }
-                    else if (ex is UnauthorizedAccessException)
-                    {
-                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NO_PERMISSION));
-                    }
-                    else
-                    {
-                        ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.UNHANDLED));
-                        throw;
-                    }
+                    HandleDiscoveringExceptions(ex, searchPath);
                 }
             }
         }
-        private void HandleExceptions(Exception exception, string fileName)
+        private void HandleDiscoveringExceptions(Exception exception, string searchPath)
+        {
+            if (pauseOnError) { Pause(); }
+            if (exception is FileNotFoundException)
+            {
+                ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NOT_FOUND));
+            }
+            else if (exception is IOException)
+            {
+                ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
+            }
+            else if (exception is UnauthorizedAccessException)
+            {
+                ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NO_PERMISSION));
+            }
+            else
+            {
+                ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.UNHANDLED));
+                throw exception;
+            }
+        }
+        private void HandleCopyExceptions(Exception exception, string fileName)
         {
             if (pauseOnError) { Pause(); }
             if (exception is FileNotFoundException)
@@ -108,7 +111,7 @@ namespace SimpleBackup.Core.Backup
             }
             catch (Exception ex)
             {
-                HandleExceptions(ex, fileName);
+                HandleCopyExceptions(ex, fileName);
             }
         }
         private void CopyAsZip()
@@ -135,7 +138,7 @@ namespace SimpleBackup.Core.Backup
             }
             catch (Exception ex)
             {
-                HandleExceptions(ex, fileName);
+                HandleCopyExceptions(ex, fileName);
             }
 
         }
@@ -158,29 +161,12 @@ namespace SimpleBackup.Core.Backup
             }
             catch (Exception ex)
             {
-                HandleExceptions(ex, null);
+                HandleCopyExceptions(ex, null);
             }
         }
         #endregion
         #region Public Methods
-        /// <summary>Create a backup handler object</summary>
-        public BackupHandler(
-            string destinationPath,
-            string[] includedPaths,
-            string[] excludedPaths,
-            string[] excludedRegexFilenames,
-            Constants.BackupType backupType,
-            bool pauseOnError)
-        {
-            this.destinationPath = destinationPath;
-            this.includedPaths = includedPaths;
-            this.excludedPaths = excludedPaths;
-            this.excludedRegexFilenames = excludedRegexFilenames;
-            this.backupType = backupType;
-            this.pauseOnError = pauseOnError;
-            pathsLeft = new();
-        }
-        /// <summary>Create a backup handler object</summary>
+        /// <summary>Create a backup handler object, defaulting to FOLDER backup</summary>
         public BackupHandler(
             string destinationPath,
             string[] includedPaths,
@@ -195,6 +181,17 @@ namespace SimpleBackup.Core.Backup
             backupType = Constants.BackupType.FOLDER;
             this.pauseOnError = pauseOnError;
             pathsLeft = new();
+        }
+        /// <summary>Create a backup handler object</summary>
+        public BackupHandler(
+            string destinationPath,
+            string[] includedPaths,
+            string[] excludedPaths,
+            string[] excludedRegexFilenames,
+            Constants.BackupType backupType,
+            bool pauseOnError) : this(destinationPath, includedPaths, excludedPaths, excludedRegexFilenames, pauseOnError)
+        {
+            this.backupType = backupType;
         }
         /// <summary>Start the backup</summary>
         public void Start()
