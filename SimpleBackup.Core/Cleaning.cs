@@ -18,14 +18,14 @@ namespace SimpleBackup.Core
         /// Where the backups can be found
         /// </param>
         /// <returns>How many backups were deleted</returns>
-        /// <exception cref="System.Exception">
+        /// <exception cref="Exception">
         /// When versionsToKeep is below 1
         /// </exception>
         public static int RemovePreviousBackups(int versionsToKeep, string backupDirectory)
         {
             // argument validation check
             if (versionsToKeep < 0)
-                throw new System.Exception("Argument 'versionsToKeep' must be >= 0");
+                throw new Exception("Argument 'versionsToKeep' must be >= 0");
 
             // get both the file & folder backups
             string[] allBackups = Discovery.FindPreviousBackups(backupDirectory).ToArray();

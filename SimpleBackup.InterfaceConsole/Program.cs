@@ -70,7 +70,7 @@ namespace SimpleBackup.InterfaceConsole
         }
         static void InteractiveConfigPathsMenu(int configIndex, IncludedOrExcluded includedOrExcluded)
         {
-            string headerMsg = String.Empty;
+            string headerMsg = string.Empty;
             List<string> currentPaths = new();
             switch (includedOrExcluded)
             {
@@ -83,7 +83,7 @@ namespace SimpleBackup.InterfaceConsole
                     currentPaths = QuickConfig.AppConfig.BackupConfigs[configIndex].ExcludedPaths.ToList();
                     break;
             }
-            string title = String.Format(
+            string title = string.Format(
                 "CONFIG - {0} - {1}\n",
                 QuickConfig.AppConfig.BackupConfigs[configIndex].Name,
                 headerMsg
@@ -113,7 +113,7 @@ namespace SimpleBackup.InterfaceConsole
                 {
                     // TODO Validate it is a real path
                     string newPath = Utils.ShowStringInput("Enter Path To Append");
-                    if (!String.IsNullOrWhiteSpace(newPath))
+                    if (!string.IsNullOrWhiteSpace(newPath))
                     {
                         currentPaths.Add(newPath);
                         WritePathIncludedOrExcluded(
@@ -194,7 +194,7 @@ namespace SimpleBackup.InterfaceConsole
                 Console.WriteLine("\t(3) -> Included Paths = {0} Paths", selectedConfig.IncludedPaths.Length);
                 Console.WriteLine("\t(4) -> Excluded Paths = {0} Paths", selectedConfig.ExcludedPaths.Length);
                 Console.WriteLine("\t(5) -> Versions To Keep = {0}", selectedConfig.VersionsToKeep);
-                Console.WriteLine("\t(6) -> Backup Type = {0}", Enum.GetName<Constants.BackupType>(selectedConfig.BackupType));
+                Console.WriteLine("\t(6) -> Backup Type = {0}", Enum.GetName(selectedConfig.BackupType));
                 Console.WriteLine("\t(R)ename -> Rename the config name");
                 Console.WriteLine("\t(D)elete -> Delete the config");
                 Console.WriteLine("\t(Q)uit -> Go back");
@@ -208,7 +208,7 @@ namespace SimpleBackup.InterfaceConsole
                 else if (input == "r")
                 {
                     string newConfigName = Utils.ShowStringInput("Enter Updated Config Name");
-                    if (!String.IsNullOrWhiteSpace(newConfigName))
+                    if (!string.IsNullOrWhiteSpace(newConfigName))
                     {
                         selectedConfig.Name = newConfigName;
                         QuickConfig.AppConfig.BackupConfigs[configIndex] = selectedConfig;
@@ -239,7 +239,7 @@ namespace SimpleBackup.InterfaceConsole
                     if (option == 1)
                     {
                         string newName = Utils.ShowStringInput("Enter Updated Config Name");
-                        if (!String.IsNullOrWhiteSpace(newName))
+                        if (!string.IsNullOrWhiteSpace(newName))
                         {
                             selectedConfig.Name = newName;
                             QuickConfig.AppConfig.BackupConfigs[configIndex] = selectedConfig;
@@ -250,7 +250,7 @@ namespace SimpleBackup.InterfaceConsole
                     {
                         // TODO Validate it is a real path
                         string newDestination = Utils.ShowStringInput("Enter Updated Destination Path");
-                        if (!String.IsNullOrWhiteSpace(newDestination))
+                        if (!string.IsNullOrWhiteSpace(newDestination))
                         {
                             selectedConfig.DestinationPath = newDestination;
                             QuickConfig.AppConfig.BackupConfigs[configIndex] = selectedConfig;
@@ -260,12 +260,10 @@ namespace SimpleBackup.InterfaceConsole
                     else if (option == 3)
                     {
                         InteractiveConfigPathsMenu(configIndex, IncludedOrExcluded.INCLUDED);
-                        selectedConfig = QuickConfig.AppConfig.BackupConfigs[configIndex];
                     }
                     else if (option == 4)
                     {
                         InteractiveConfigPathsMenu(configIndex, IncludedOrExcluded.EXCLUDED);
-                        selectedConfig = QuickConfig.AppConfig.BackupConfigs[configIndex];
                     }
                     else if (option == 5)
                     {
@@ -341,7 +339,7 @@ namespace SimpleBackup.InterfaceConsole
                 if (input == "a")
                 {
                     string newConfigName = Utils.ShowStringInput("Enter New Config Name");
-                    if (!String.IsNullOrWhiteSpace(newConfigName))
+                    if (!string.IsNullOrWhiteSpace(newConfigName))
                     {
                         Array.Resize(ref QuickConfig.AppConfig.BackupConfigs, QuickConfig.AppConfig.BackupConfigs.Length + 1);
                         QuickConfig.AppConfig.BackupConfigs[QuickConfig.AppConfig.BackupConfigs.Length - 1] = new BackupConfig() { Name = newConfigName };

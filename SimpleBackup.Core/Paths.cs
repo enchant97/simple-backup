@@ -13,9 +13,7 @@ namespace SimpleBackup.Core
         {
             bool isWindows = OperatingSystem.IsWindows();
             if (isWindows)
-            {
-                return Path.Join(destPath, srcPath[0].ToString(), srcPath.Substring(3));
-            }
+                return Path.Join(destPath, srcPath[0].ToString(), srcPath[3..]);
             return Path.Join(destPath, srcPath);
         }
         /// <summary>
@@ -46,7 +44,7 @@ namespace SimpleBackup.Core
             {
                 case Constants.BackupType.ZIP:
                 case Constants.BackupType.ZIP_NO_COMPRESS:
-                    backupName = backupName + ".zip";
+                    backupName += ".zip";
                     break;
 
             }

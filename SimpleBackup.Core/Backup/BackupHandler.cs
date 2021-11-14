@@ -122,19 +122,15 @@ namespace SimpleBackup.Core.Backup
             };
             try
             {
-                using (FileStream zipStream = File.Open(destinationPath, FileMode.OpenOrCreate))
+                using FileStream zipStream = File.Open(destinationPath, FileMode.OpenOrCreate);
+                using ZipArchive archive = new(zipStream, ZipArchiveMode.Update);
+                while (!IsPathQueueEmpty && !IsPaused)
                 {
-                    using (ZipArchive archive = new(zipStream, ZipArchiveMode.Update))
-                    {
-                        while (!IsPathQueueEmpty && !IsPaused)
-                        {
-                            bool isValid = pathsLeft.TryDequeue(out fileName);
-                            if (!isValid) { return; }
-                            string dstPath = Paths.CombineFullPath(fileName, "");
-                            archive.CreateEntryFromFile(fileName, dstPath, compressionLevel);
-                            CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
-                        }
-                    }
+                    bool isValid = pathsLeft.TryDequeue(out fileName);
+                    if (!isValid) { return; }
+                    string dstPath = Paths.CombineFullPath(fileName, "");
+                    archive.CreateEntryFromFile(fileName, dstPath, compressionLevel);
+                    CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
                 }
             }
             catch (Exception ex)

@@ -12,7 +12,7 @@ namespace SimpleBackup.InterfaceConsole
         public static void ShowHeader()
         {
             Console.WriteLine(GetTitle());
-            Console.WriteLine(new String('-', Console.WindowWidth));
+            Console.WriteLine(new string('-', Console.WindowWidth));
         }
         public static string GetInput()
         {

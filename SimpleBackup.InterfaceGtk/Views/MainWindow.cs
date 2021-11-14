@@ -52,7 +52,7 @@ namespace SimpleBackup.InterfaceGtk.Views
             configLastBackup.Text = loadedConfig.LastBackup.ToString();
             configVersionsToKeepSpinner.Value = loadedConfig.VersionsToKeep;
             destPathLabel.Text = loadedConfig.DestinationPath;
-            string backupTypeName = Enum.GetName<Constants.BackupType>(loadedConfig.BackupType);
+            string backupTypeName = Enum.GetName(loadedConfig.BackupType);
             changeBackupTypeBnt.Label = string.Format("Change Backup Type ({0})", backupTypeName);
         }
         private void LockWidgets(bool locked = true)
@@ -103,9 +103,9 @@ namespace SimpleBackup.InterfaceGtk.Views
                 statusBar.Push(0, "Backup Finished");
             backupThread = null;
         }
-        private string ExceptionToString(BackupHandlerErrorEventArgs args)
+        public static string ExceptionToString(BackupHandlerErrorEventArgs args)
         {
-            string errorMsg = args.errorType switch
+            string errorMsg = args.ErrorType switch
             {
                 Constants.ErrorTypes.NO_PERMISSION => "No permission at",
                 Constants.ErrorTypes.NOT_COPYABLE_TYPE => "Not copyable type at",
@@ -113,7 +113,7 @@ namespace SimpleBackup.InterfaceGtk.Views
                 _ => "Unhandled error at"
 
             };
-            return string.Format("{0} '{1}'", errorMsg, args.fullPath);
+            return string.Format("{0} '{1}'", errorMsg, args.FullPath);
         }
         private void HandleBackupException(BackupHandlerErrorEventArgs args)
         {
