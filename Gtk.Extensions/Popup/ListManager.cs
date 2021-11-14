@@ -1,6 +1,6 @@
+using Gtk.Extensions.Widgets;
 using System;
 using System.Linq;
-using Gtk.Extensions.Widgets;
 
 namespace Gtk.Extensions.Popup
 {

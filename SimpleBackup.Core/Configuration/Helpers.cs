@@ -1,6 +1,6 @@
-﻿using System.Xml.Serialization;
+﻿using SimpleBackup.Core.Configuration.Types;
 using System.IO;
-using SimpleBackup.Core.Configuration.Types;
+using System.Xml.Serialization;
 
 namespace SimpleBackup.Core.Configuration
 {

@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Linq;
 using Gtk;
 using Gtk.Extensions.Popup;
 using SimpleBackup.Core;
 using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using UI = Gtk.Builder.ObjectAttribute;
 
 namespace SimpleBackup.InterfaceGtk.Views

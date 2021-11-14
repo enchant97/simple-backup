@@ -1,5 +1,5 @@
-using System;
 using SimpleBackup.Core;
+using System;
 
 namespace SimpleBackup.InterfaceConsole
 {

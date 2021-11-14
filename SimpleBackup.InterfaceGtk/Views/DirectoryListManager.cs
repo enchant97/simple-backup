@@ -1,6 +1,6 @@
-using System;
 using Gtk;
 using Gtk.Extensions.Popup;
+using System;
 
 namespace SimpleBackup.InterfaceGtk.Views
 {

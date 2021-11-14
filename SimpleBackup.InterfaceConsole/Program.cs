@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using SimpleBackup.Core;
+﻿using SimpleBackup.Core;
 using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SimpleBackup.InterfaceConsole
 {
