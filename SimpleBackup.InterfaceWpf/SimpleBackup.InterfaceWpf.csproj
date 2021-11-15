@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>..\SimpleBackup.Resources\Icon.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SimpleBackup.Resources\SimpleBackup.Resources.csproj" />
+		<ProjectReference Include="..\SimpleBackup.Core\SimpleBackup.Core.csproj" />
+	</ItemGroup>
+
+</Project>
