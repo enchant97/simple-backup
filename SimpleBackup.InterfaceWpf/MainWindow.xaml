@@ -5,17 +5,51 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <DockPanel>
-        <Menu DockPanel.Dock="Top">
+        Title="MainWindow" Height="300" Width="400" MinHeight="300" MinWidth="300" WindowStartupLocation="CenterScreen">
+    <StackPanel>
+        <Menu VerticalAlignment="Top">
             <MenuItem Header="_File">
                 <MenuItem x:Name="MenuExitBnt" Header="_Exit" Click="MenuExitBnt_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem x:Name="MenuPreferencesBnt" Header="_Preferences" Click="MenuPreferencesBnt_Click"/>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem x:Name="MenuGetStartedBnt" Header="_Get Started" Click="MenuGetStartedBnt_Click"/>
                 <MenuItem x:Name="MenuAboutBnt" Header="_About" Click="MenuAboutBnt_Click"/>
             </MenuItem>
         </Menu>
-        <StackPanel></StackPanel>
-    </DockPanel>
+        <StackPanel>
+            <Label Content="Simple Backup" FontSize="20" HorizontalAlignment="Center"/>
+            <GroupBox Header="Config">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" Content="Current Config"/>
+                <ComboBox x:Name="CurrConfigCB" Grid.Row="0" Grid.Column="1"/>
+                <Label Grid.Row="1" Grid.Column="0" Content="Last Backup"/>
+                <Label x:Name="LastBackupLabel" Grid.Row="1" Grid.Column="1"/>
+                <Label Grid.Row="2" Grid.Column="0" Content="Destination"/>
+                <Label x:Name="DestinationLabel" Grid.Row="2" Grid.Column="1"/>
+                <Label Grid.Row="3" Grid.Column="0" Content="Type"/>
+                <Label x:Name="TypeLabel" Grid.Row="3" Grid.Column="1"/>
+            </Grid>
+            </GroupBox>
+            <GroupBox Header="Backup">
+                <StackPanel>
+                    <Button x:Name="StartBackupBnt" Content="Start" Click="StartBackupBnt_Click"/>
+                    <Button x:Name="ShowErrorsBnt" Content="Show Errors" IsEnabled="False" Click="ShowErrorsBnt_Click"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        <StatusBar x:Name="MainStatusBar" VerticalAlignment="Bottom"/>
+    </StackPanel>
 </Window>

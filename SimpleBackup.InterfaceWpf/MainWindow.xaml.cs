@@ -17,12 +17,27 @@ namespace SimpleBackup.InterfaceWpf
             Application.Current.Shutdown();
         }
 
+        private void MenuPreferencesBnt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void MenuGetStartedBnt_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
         private void MenuAboutBnt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void StartBackupBnt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ShowErrorsBnt_Click(object sender, RoutedEventArgs e)
         {
 
         }
