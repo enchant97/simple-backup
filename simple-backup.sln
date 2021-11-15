@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30114.105
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleBackup.Core", "SimpleBackup.Core\SimpleBackup.Core.csproj", "{A819BE59-3AB9-4F6F-9BEA-1A5A357843AC}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleBackup.InterfaceGtk", "SimpleBackup.InterfaceGtk\SimpleBackup.InterfaceGtk.csproj", "{68C24A95-0967-4265-BD38-3C085C9033A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gtk.Extensions", "Gtk.Extensions\Gtk.Extensions.csproj", "{1EE7639E-15D1-435F-A279-484117CF94F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleBackup.Resources", "SimpleBackup.Resources\SimpleBackup.Resources.csproj", "{9E48DB2F-6DDA-4092-8176-670E69DEAC99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,18 @@ Global
 		{1EE7639E-15D1-435F-A279-484117CF94F2}.Release|x64.Build.0 = Release|Any CPU
 		{1EE7639E-15D1-435F-A279-484117CF94F2}.Release|x86.ActiveCfg = Release|Any CPU
 		{1EE7639E-15D1-435F-A279-484117CF94F2}.Release|x86.Build.0 = Release|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Debug|x64.Build.0 = Debug|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Debug|x86.Build.0 = Debug|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Release|x64.ActiveCfg = Release|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Release|x64.Build.0 = Release|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Release|x86.ActiveCfg = Release|Any CPU
+		{9E48DB2F-6DDA-4092-8176-670E69DEAC99}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
