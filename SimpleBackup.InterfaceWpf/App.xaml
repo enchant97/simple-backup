@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        
     </Application.Resources>
 </Application>

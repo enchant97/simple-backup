@@ -24,12 +24,14 @@ namespace SimpleBackup.InterfaceWpf
 
         private void MenuGetStartedBnt_Click(object sender, RoutedEventArgs e)
         {
-
+            GetStartedWindow getStartedWindow = new() { Owner = this };
+            getStartedWindow.ShowDialog();
         }
 
         private void MenuAboutBnt_Click(object sender, RoutedEventArgs e)
         {
-
+            AboutWindow aboutWindow = new() { Owner = this };
+            aboutWindow.ShowDialog();
         }
 
         private void StartBackupBnt_Click(object sender, RoutedEventArgs e)

@@ -1,0 +1,14 @@
+﻿<Window x:Class="SimpleBackup.InterfaceWpf.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
+        Title="AboutWindow" Height="150" Width="268" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <StackPanel>
+        <TextBlock Text="Simple Backup" FontSize="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
+        <TextBlock Text="A .net6 app with a WPF GUI for creating backups, designed to be easy to use" TextWrapping="Wrap" Margin="0,0,0,10"/>
+        <TextBlock Text="Created by: Leo Spratt" TextWrapping="Wrap" FontSize="10" Margin="0,0,0,5"/>
+        <TextBlock Text="This program comes with absolutely no warranty. See the GNU General Public License, version 3 or later for details." TextWrapping="Wrap" FontSize="8"/>
+    </StackPanel>
+</Window>

@@ -1,0 +1,18 @@
+﻿<Window x:Class="SimpleBackup.InterfaceWpf.GetStartedWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
+        mc:Ignorable="d"
+        Title="GetStartedWindow" Height="155" Width="370" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <TextBlock TextWrapping="Wrap">Welcome to Simple Backup, here is some help to get you started:<LineBreak/>
+<LineBreak/>
+    - You can do full-backups<LineBreak/>
+	- You can include and exclude paths to backup<LineBreak/>
+	- You can set versions of backups to keep<LineBreak/>
+	- You can keep different configurations for backups<LineBreak/>
+	- Once everything is configured you can backup with one command<LineBreak/>
+	- All configs are stored in a xml file<LineBreak/>
+    </TextBlock>
+</Window>
