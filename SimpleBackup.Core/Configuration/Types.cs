@@ -17,10 +17,14 @@ namespace SimpleBackup.Core.Configuration.Types
         [XmlAttribute]
         public string Name = "default";
         public string DestinationPath = "";
-        public string[] IncludedPaths = { };
-        public string[] ExcludedPaths = { };
+        public string[] IncludedPaths = Array.Empty<string>();
+        public string[] ExcludedPaths = Array.Empty<string>();
         public int VersionsToKeep = 2;
         public Constants.BackupType BackupType = Constants.BackupType.FOLDER;
         public DateTime LastBackup;
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
