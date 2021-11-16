@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using SimpleBackup.Core.Configuration;
 using System.Windows;
 
 namespace SimpleBackup.InterfaceWpf
@@ -13,5 +8,9 @@ namespace SimpleBackup.InterfaceWpf
     /// </summary>
     public partial class App : Application
     {
+        public App() :base()
+        {
+            QuickConfig.Read();
+        }
     }
 }

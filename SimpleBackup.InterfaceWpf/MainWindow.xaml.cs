@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+using SimpleBackup.Core.Configuration;
+using SimpleBackup.Core.Configuration.Types;
 
 namespace SimpleBackup.InterfaceWpf
 {
@@ -10,6 +12,8 @@ namespace SimpleBackup.InterfaceWpf
         public MainWindow()
         {
             InitializeComponent();
+            CurrConfigCB.ItemsSource = QuickConfig.AppConfig.BackupConfigs;
+            CurrConfigCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
         }
 
         private void MenuExitBnt_Click(object sender, RoutedEventArgs e)
@@ -42,6 +46,14 @@ namespace SimpleBackup.InterfaceWpf
         private void ShowErrorsBnt_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void CurrConfigCB_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            BackupConfig backupConfig = (BackupConfig)CurrConfigCB.SelectedItem;
+            LastBackupLabel.Content = backupConfig.LastBackup;
+            DestinationLabel.Content = backupConfig.DestinationPath;
+            TypeLabel.Content = backupConfig.BackupType.ToString();
         }
     }
 }

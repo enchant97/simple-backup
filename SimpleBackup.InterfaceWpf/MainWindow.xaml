@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="300" Width="400" MinHeight="300" MinWidth="300" WindowStartupLocation="CenterScreen">
+    <!--<Window.Resources>
+        <CollectionViewSource x:Key="appConfig" Source="{x:Static config:QuickConfig+AppConfig.BackupConfigs}" />
+    </Window.Resources>-->
     <StackPanel>
         <Menu VerticalAlignment="Top">
             <MenuItem Header="_File">
@@ -22,26 +25,26 @@
         <StackPanel>
             <Label Content="Simple Backup" FontSize="20" HorizontalAlignment="Center"/>
             <GroupBox Header="Config">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Content="Current Config"/>
-                <ComboBox x:Name="CurrConfigCB" Grid.Row="0" Grid.Column="1"/>
-                <Label Grid.Row="1" Grid.Column="0" Content="Last Backup"/>
-                <Label x:Name="LastBackupLabel" Grid.Row="1" Grid.Column="1"/>
-                <Label Grid.Row="2" Grid.Column="0" Content="Destination"/>
-                <Label x:Name="DestinationLabel" Grid.Row="2" Grid.Column="1"/>
-                <Label Grid.Row="3" Grid.Column="0" Content="Type"/>
-                <Label x:Name="TypeLabel" Grid.Row="3" Grid.Column="1"/>
-            </Grid>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Content="Current Config"/>
+                    <ComboBox x:Name="CurrConfigCB" Grid.Row="0" Grid.Column="1" SelectionChanged="CurrConfigCB_SelectionChanged"/>
+                    <Label Grid.Row="1" Grid.Column="0" Content="Last Backup"/>
+                    <Label x:Name="LastBackupLabel" Grid.Row="1" Grid.Column="1"/>
+                    <Label Grid.Row="2" Grid.Column="0" Content="Destination"/>
+                    <Label x:Name="DestinationLabel" Grid.Row="2" Grid.Column="1"/>
+                    <Label Grid.Row="3" Grid.Column="0" Content="Type"/>
+                    <Label x:Name="TypeLabel" Grid.Row="3" Grid.Column="1"/>
+                </Grid>
             </GroupBox>
             <GroupBox Header="Backup">
                 <StackPanel>
