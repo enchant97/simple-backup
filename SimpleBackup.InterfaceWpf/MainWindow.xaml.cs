@@ -23,7 +23,8 @@ namespace SimpleBackup.InterfaceWpf
 
         private void MenuPreferencesBnt_Click(object sender, RoutedEventArgs e)
         {
-
+            SettingsWindow settingsWindow = new() { Owner = this };
+            _ = settingsWindow.ShowDialog();
         }
 
         private void MenuGetStartedBnt_Click(object sender, RoutedEventArgs e)
