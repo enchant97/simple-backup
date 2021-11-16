@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace SimpleBackup.InterfaceWpf
 {
@@ -38,6 +39,36 @@ namespace SimpleBackup.InterfaceWpf
         }
 
         private void DeleteExcludedPathBnt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ShowHelpCB_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DefaultBackupConfigCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ConfigToEditCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void NewConfigNameTB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void CurrConfigNameTB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void VersionsToKeepTB_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }

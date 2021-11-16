@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
         mc:Ignorable="d"
-        Title="GetStartedWindow" Height="155" Width="370" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        Title="Getting Started" Height="155" Width="370" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <TextBlock TextWrapping="Wrap">Welcome to Simple Backup, here is some help to get you started:<LineBreak/>
 <LineBreak/>
     - You can do full-backups<LineBreak/>

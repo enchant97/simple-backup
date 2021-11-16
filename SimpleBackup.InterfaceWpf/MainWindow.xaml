@@ -5,10 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="400" MinHeight="300" MinWidth="300" WindowStartupLocation="CenterScreen">
-    <!--<Window.Resources>
-        <CollectionViewSource x:Key="appConfig" Source="{x:Static config:QuickConfig+AppConfig.BackupConfigs}" />
-    </Window.Resources>-->
+        Title="Simple Backup" Height="300" Width="400" MinHeight="300" MinWidth="300" WindowStartupLocation="CenterScreen">
     <StackPanel>
         <Menu VerticalAlignment="Top">
             <MenuItem Header="_File">

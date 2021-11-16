@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
-        Title="AboutWindow" Height="150" Width="268" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        Title="About" Height="150" Width="268" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <StackPanel>
         <TextBlock Text="Simple Backup" FontSize="20" TextWrapping="Wrap" HorizontalAlignment="Center"/>
         <TextBlock Text="A .net6 app with a WPF GUI for creating backups, designed to be easy to use" TextWrapping="Wrap" Margin="0,0,0,10"/>
