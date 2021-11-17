@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.IO.Compression;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace SimpleBackup.Core.Backup
 {
@@ -116,23 +116,23 @@ namespace SimpleBackup.Core.Backup
         }
         private void CopyAsZip()
         {
-            // TODO rewrite using SharpZipLib
             string fileName = null;
-            CompressionLevel compressionLevel = backupType switch
+            CompressionMethod compressionMethod = backupType switch
             {
-                Constants.BackupType.ZIP_NO_COMPRESS => CompressionLevel.NoCompression,
-                _ => CompressionLevel.Optimal,
+                Constants.BackupType.ZIP_NO_COMPRESS => CompressionMethod.Stored,
+                _ => CompressionMethod.Deflated,
             };
             try
             {
-                using FileStream zipStream = File.Open(destinationPath, FileMode.OpenOrCreate);
-                using ZipArchive archive = new(zipStream, ZipArchiveMode.Update);
+                using var fs = File.Open(destinationPath, FileMode.OpenOrCreate);
+                using var outStream = new ZipOutputStream(fs);
                 while (!IsPathQueueEmpty && !IsPaused)
                 {
                     bool isValid = pathsLeft.TryDequeue(out fileName);
                     if (!isValid) { return; }
                     string dstPath = Paths.CombineFullPath(fileName, "");
-                    archive.CreateEntryFromFile(fileName, dstPath, compressionLevel);
+                    outStream.PutNextEntry(new ZipEntry(dstPath) { CompressionMethod = compressionMethod });
+                    outStream.Write(File.ReadAllBytes(fileName));
                     CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
                 }
             }
