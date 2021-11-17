@@ -3,6 +3,8 @@ using SimpleBackup.Core.Configuration.Types;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
+using System.Collections.Generic;
 using Ookii.Dialogs.Wpf;
 
 namespace SimpleBackup.InterfaceWpf
@@ -29,6 +31,9 @@ namespace SimpleBackup.InterfaceWpf
             BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex];
             CurrConfigNameTB.Text = currConfig.Name;
             ConfigDestination.Content = currConfig.DestinationPath;
+            IncludedPathsLB.ItemsSource = currConfig.IncludedPaths;
+            ExcludedPathsLB.ItemsSource = currConfig.ExcludedPaths;
+            VersionsToKeepTB.Text = currConfig.VersionsToKeep.ToString();
         }
 
         private void NewConfigBnt_Click(object sender, RoutedEventArgs e)
@@ -66,22 +71,56 @@ namespace SimpleBackup.InterfaceWpf
 
         private void AddIncludedPathBnt_Click(object sender, RoutedEventArgs e)
         {
-
+            VistaFolderBrowserDialog dialog = new()
+            {
+                Multiselect = false
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                string[] includedPaths = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths;
+                Array.Resize(ref includedPaths, includedPaths.Length + 1);
+                includedPaths[^1] = dialog.SelectedPath;
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths = includedPaths;
+                IncludedPathsLB.ItemsSource = includedPaths;
+            }
         }
 
         private void DeleteIncludedPathBnt_Click(object sender, RoutedEventArgs e)
         {
-
+            if (IncludedPathsLB.SelectedItem != null)
+            {
+                List<string> includedPaths = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths.ToList();
+                includedPaths.RemoveAt(IncludedPathsLB.SelectedIndex);
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths = includedPaths.ToArray();
+                IncludedPathsLB.ItemsSource = includedPaths;
+            }
         }
 
         private void AddExcludedPathBnt_Click(object sender, RoutedEventArgs e)
         {
-
+            VistaFolderBrowserDialog dialog = new()
+            {
+                Multiselect = false
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                string[] excludedPaths = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths;
+                Array.Resize(ref excludedPaths, excludedPaths.Length + 1);
+                excludedPaths[^1] = dialog.SelectedPath;
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths = excludedPaths;
+                ExcludedPathsLB.ItemsSource = excludedPaths;
+            }
         }
 
         private void DeleteExcludedPathBnt_Click(object sender, RoutedEventArgs e)
         {
-
+            if (ExcludedPathsLB.SelectedItem != null)
+            {
+                List<string> excludedPaths = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths.ToList();
+                excludedPaths.RemoveAt(ExcludedPathsLB.SelectedIndex);
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths = excludedPaths.ToArray();
+                ExcludedPathsLB.ItemsSource = excludedPaths;
+            }
         }
 
         private void ShowHelpCB_Click(object sender, RoutedEventArgs e)
@@ -99,17 +138,21 @@ namespace SimpleBackup.InterfaceWpf
 
         private void ConfigToEditCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            RefreshCurrBackupConfig();
         }
 
         private void CurrConfigNameTB_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
+            QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].Name = CurrConfigNameTB.Text;
         }
 
         private void VersionsToKeepTB_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+            bool isValid = int.TryParse(VersionsToKeepTB.Text, out int newVersion);
+            if (isValid)
+            {
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].VersionsToKeep = newVersion;
+            }
         }
     }
 }
