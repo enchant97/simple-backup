@@ -46,7 +46,12 @@ namespace SimpleBackup.Core
                 case Constants.BackupType.ZIP_NO_COMPRESS:
                     backupName += ".zip";
                     break;
-
+                case Constants.BackupType.TAR:
+                    backupName += ".tar";
+                    break;
+                case Constants.BackupType.TAR_GZ:
+                    backupName += ".tar.gz";
+                    break;
             }
             return backupName;
         }

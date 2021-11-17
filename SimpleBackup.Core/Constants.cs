@@ -41,6 +41,8 @@ namespace SimpleBackup.Core
             FOLDER,
             ZIP,
             ZIP_NO_COMPRESS,
+            TAR,
+            TAR_GZ,
         }
         /// <summary>
         /// Possible error types that could happen

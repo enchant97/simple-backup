@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
+using ICSharpCode.SharpZipLib.Tar;
+using ICSharpCode.SharpZipLib.GZip;
 
 namespace SimpleBackup.Core.Backup
 {
@@ -124,8 +127,8 @@ namespace SimpleBackup.Core.Backup
             };
             try
             {
-                using var fs = File.Open(destinationPath, FileMode.OpenOrCreate);
-                using var outStream = new ZipOutputStream(fs);
+                using FileStream fs = File.Open(destinationPath, FileMode.OpenOrCreate);
+                using ZipOutputStream outStream = new(fs);
                 while (!IsPathQueueEmpty && !IsPaused)
                 {
                     bool isValid = pathsLeft.TryDequeue(out fileName);
@@ -140,7 +143,34 @@ namespace SimpleBackup.Core.Backup
             {
                 HandleCopyExceptions(ex, fileName);
             }
-
+        }
+        private void CopyAsTar()
+        {
+            string fileName = null;
+            try
+            {
+                using FileStream fs = File.Open(destinationPath, FileMode.OpenOrCreate);
+                using Stream outStream = backupType switch
+                {
+                    Constants.BackupType.TAR_GZ => new GZipOutputStream(fs),
+                    _ => new TarOutputStream(fs, Encoding.UTF8),
+                };
+                using TarArchive tarArchive = TarArchive.CreateOutputTarArchive(outStream);
+                while (!IsPathQueueEmpty && !IsPaused)
+                {
+                    bool isValid = pathsLeft.TryDequeue(out fileName);
+                    if (!isValid) { return; }
+                    string dstPath = Paths.CombineFullPath(fileName, "");
+                    TarEntry tarEntry = TarEntry.CreateEntryFromFile(fileName);
+                    tarEntry.Name = dstPath;
+                    tarArchive.WriteEntry(tarEntry, false);
+                    CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
+                }
+            }
+            catch (Exception ex)
+            {
+                HandleCopyExceptions(ex, fileName);
+            }
         }
         private void StartCopy()
         {
@@ -154,6 +184,10 @@ namespace SimpleBackup.Core.Backup
                     case Constants.BackupType.ZIP:
                     case Constants.BackupType.ZIP_NO_COMPRESS:
                         CopyAsZip();
+                        break;
+                    case Constants.BackupType.TAR:
+                    case Constants.BackupType.TAR_GZ:
+                        CopyAsTar();
                         break;
                     default:
                         throw new Exception(string.Format("backup type '{0}' not supported", backupType.ToString()));
