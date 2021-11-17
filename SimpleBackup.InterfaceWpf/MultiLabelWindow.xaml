@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
         mc:Ignorable="d"
-        Title="MultiLabelWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="MultiLabelWindow" Height="350" Width="480" MinHeight="300" MinWidth="300">
+    <ScrollViewer>
+        <ListView x:Name="MessageLV" d:ItemsSource="{d:SampleData ItemCount=10}"/>
+    </ScrollViewer>
 </Window>

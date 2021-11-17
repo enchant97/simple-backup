@@ -11,6 +11,7 @@ namespace SimpleBackup.InterfaceWpf
         {
             InitializeComponent();
             Title = title;
+            MessageLV.ItemsSource = messages;
         }
     }
 }
