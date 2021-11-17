@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SimpleBackup.InterfaceWpf"
+        xmlns:core="clr-namespace:SimpleBackup.Core;assembly=SimpleBackup.Core"
         mc:Ignorable="d"
-        Title="Settings" Height="580" Width="380" MinHeight="580" MinWidth="380" WindowStartupLocation="CenterOwner">
+        Title="Settings" Height="590" Width="380" MinHeight="590" MinWidth="380" WindowStartupLocation="CenterOwner">
     <StackPanel>
         <TabControl>
             <TabItem Header="General">
@@ -53,6 +53,7 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                                 <RowDefinition/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
@@ -83,6 +84,8 @@
                             </StackPanel>
                             <Label Grid.Row="8" Grid.Column="0" Content="Versions To Keep"/>
                             <TextBox x:Name="VersionsToKeepTB" Grid.Row="8" Grid.Column="1" TextChanged="VersionsToKeepTB_TextChanged"/>
+                            <Label Grid.Row="9" Grid.Column="0" Content="Backup Type"/>
+                            <ComboBox x:Name="BackupTypeCB" Grid.Row="9" Grid.Column="1" SelectionChanged="BackupTypeCB_SelectionChanged"/>
                         </Grid>
                     </GroupBox>
                 </StackPanel>

@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Linq;
 using System.Collections.Generic;
 using Ookii.Dialogs.Wpf;
+using SimpleBackup.Core;
 
 namespace SimpleBackup.InterfaceWpf
 {
@@ -23,6 +24,7 @@ namespace SimpleBackup.InterfaceWpf
             DefaultBackupConfigCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
             ConfigToEditCB.ItemsSource = QuickConfig.AppConfig.BackupConfigs;
             ConfigToEditCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
+            BackupTypeCB.ItemsSource = Enum.GetNames(typeof(Constants.BackupType));
             RefreshCurrBackupConfig();
         }
 
@@ -34,6 +36,7 @@ namespace SimpleBackup.InterfaceWpf
             IncludedPathsLB.ItemsSource = currConfig.IncludedPaths;
             ExcludedPathsLB.ItemsSource = currConfig.ExcludedPaths;
             VersionsToKeepTB.Text = currConfig.VersionsToKeep.ToString();
+            BackupTypeCB.SelectedItem = Enum.GetName(currConfig.BackupType);
         }
 
         private void NewConfigBnt_Click(object sender, RoutedEventArgs e)
@@ -153,6 +156,12 @@ namespace SimpleBackup.InterfaceWpf
             {
                 QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].VersionsToKeep = newVersion;
             }
+        }
+
+        private void BackupTypeCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Constants.BackupType backupType = Enum.Parse<Constants.BackupType>((string)BackupTypeCB.SelectedItem);
+            QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].BackupType = backupType;
         }
     }
 }

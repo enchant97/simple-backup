@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using SimpleBackup.Core;
 using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
@@ -40,6 +41,13 @@ namespace SimpleBackup.InterfaceWpf
 
             };
             return string.Format("{0} '{1}'", errorMsg, args.FullPath);
+        }
+        private void RefreshUi()
+        {
+            BackupConfig backupConfig = (BackupConfig)CurrConfigCB.SelectedItem;
+            LastBackupLabel.Content = backupConfig.LastBackup;
+            DestinationLabel.Content = backupConfig.DestinationPath;
+            TypeLabel.Content = Enum.GetName(backupConfig.BackupType);
         }
         #endregion
 
@@ -104,7 +112,7 @@ namespace SimpleBackup.InterfaceWpf
                 currConfig.BackupType,
                 false
             );
-            
+
             // setup events
             backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) =>
             {
@@ -147,9 +155,15 @@ namespace SimpleBackup.InterfaceWpf
 
         private void MenuPreferencesBnt_Click(object sender, RoutedEventArgs e)
         {
+            if (backupThread != null)
+            {
+                _ = MessageBox.Show("Cannot open preferences while backup is running", "Backup Running", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             SettingsWindow settingsWindow = new() { Owner = this };
             _ = settingsWindow.ShowDialog();
             QuickConfig.Write();
+            RefreshUi();
         }
 
         private void MenuGetStartedBnt_Click(object sender, RoutedEventArgs e)
@@ -166,7 +180,11 @@ namespace SimpleBackup.InterfaceWpf
 
         private void StartBackupBnt_Click(object sender, RoutedEventArgs e)
         {
-            if (backupThread != null) return;
+            if (backupThread != null)
+            {
+                _ = MessageBox.Show("Cannot start another backup while running", "Backup Running", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[CurrConfigCB.SelectedIndex];
 
@@ -194,12 +212,9 @@ namespace SimpleBackup.InterfaceWpf
             _ = dialog.ShowDialog();
         }
 
-        private void CurrConfigCB_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void CurrConfigCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            BackupConfig backupConfig = (BackupConfig)CurrConfigCB.SelectedItem;
-            LastBackupLabel.Content = backupConfig.LastBackup;
-            DestinationLabel.Content = backupConfig.DestinationPath;
-            TypeLabel.Content = backupConfig.BackupType.ToString();
+            RefreshUi();
         }
         #endregion
     }
