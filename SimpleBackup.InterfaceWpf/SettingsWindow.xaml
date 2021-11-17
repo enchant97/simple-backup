@@ -37,7 +37,7 @@
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Row="0" Grid.Column="0" Content="Name"/>
-                            <TextBox x:Name="NewConfigNameTB" Grid.Row="0" Grid.Column="1" TextChanged="NewConfigNameTB_TextChanged"/>
+                            <TextBox x:Name="NewConfigNameTB" Grid.Row="0" Grid.Column="1"/>
                             <Button x:Name="NewConfigBnt" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Content="Add" Click="NewConfigBnt_Click"/>
                         </Grid>
                     </GroupBox>

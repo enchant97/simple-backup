@@ -195,7 +195,7 @@ namespace SimpleBackup.InterfaceGtk.Views
                 if (!string.IsNullOrEmpty(dialog.Input))
                 {
                     Array.Resize(ref QuickConfig.AppConfig.BackupConfigs, QuickConfig.AppConfig.BackupConfigs.Length + 1);
-                    QuickConfig.AppConfig.BackupConfigs[QuickConfig.AppConfig.BackupConfigs.Length - 1] = new BackupConfig() { Name = dialog.Input };
+                    QuickConfig.AppConfig.BackupConfigs[^1] = new BackupConfig() { Name = dialog.Input };
                     QuickConfig.Write();
                 }
             }

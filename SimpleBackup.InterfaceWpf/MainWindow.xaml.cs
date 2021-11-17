@@ -25,6 +25,7 @@ namespace SimpleBackup.InterfaceWpf
         {
             SettingsWindow settingsWindow = new() { Owner = this };
             _ = settingsWindow.ShowDialog();
+            QuickConfig.Write();
         }
 
         private void MenuGetStartedBnt_Click(object sender, RoutedEventArgs e)
