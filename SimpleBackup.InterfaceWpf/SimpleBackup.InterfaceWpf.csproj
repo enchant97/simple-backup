@@ -6,7 +6,12 @@
 		<Nullable>enable</Nullable>
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>..\SimpleBackup.Resources\Icon.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Ookii.Dialogs.Wpf" Version="5.0.0" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\SimpleBackup.Resources\SimpleBackup.Resources.csproj" />

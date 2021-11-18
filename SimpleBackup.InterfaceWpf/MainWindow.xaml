@@ -46,10 +46,12 @@
             <GroupBox Header="Backup">
                 <StackPanel>
                     <Button x:Name="StartBackupBnt" Content="Start" Click="StartBackupBnt_Click"/>
-                    <Button x:Name="ShowErrorsBnt" Content="Show Errors" IsEnabled="False" Click="ShowErrorsBnt_Click"/>
+                    <Button x:Name="ShowErrorsBnt" Content="Show Errors (0)" Click="ShowErrorsBnt_Click"/>
                 </StackPanel>
             </GroupBox>
         </StackPanel>
-        <StatusBar x:Name="MainStatusBar" VerticalAlignment="Bottom"/>
+        <StatusBar VerticalAlignment="Bottom">
+            <StatusBarItem x:Name="MainStatus"/>
+        </StatusBar>
     </StackPanel>
 </Window>
