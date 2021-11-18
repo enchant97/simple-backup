@@ -7,6 +7,10 @@
 		<UseWPF>true</UseWPF>
 		<ApplicationIcon>..\SimpleBackup.Resources\Icon.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Version>1.0.0.0</Version>
+		<AssemblyTitle>Simple Backup - WPF</AssemblyTitle>
+		<Product>Simple Backup - WPF</Product>
+		<Copyright>Leo Spratt - GPL-3.0</Copyright>
 	</PropertyGroup>
 
 	<ItemGroup>
