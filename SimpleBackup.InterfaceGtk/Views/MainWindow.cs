@@ -1,13 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using Gtk;
 using Gtk.Extensions.Popup;
 using SimpleBackup.Core;
 using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+using SimpleBackup.Core.Paths;
 using UI = Gtk.Builder.ObjectAttribute;
 
 namespace SimpleBackup.InterfaceGtk.Views
@@ -124,7 +125,7 @@ namespace SimpleBackup.InterfaceGtk.Views
         {
             Application.Invoke(delegate { HandleBackupStart(); });
             BackupConfig currConfig = QuickConfig.AppConfig.BackupConfigs[currConfigI];
-            string backupDstPath = Paths.GenerateBackupName(
+            string backupDstPath = Generation.GenerateBackupName(
                 currConfig.DestinationPath,
                 currConfig.BackupType
             );

@@ -1,10 +1,11 @@
-﻿using SimpleBackup.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using SimpleBackup.Core;
 using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using SimpleBackup.Core.Paths;
 
 namespace SimpleBackup.InterfaceConsole
 {
@@ -13,7 +14,6 @@ namespace SimpleBackup.InterfaceConsole
     {
         static void Main(string[] args)
         {
-
             QuickConfig.Read();
             InteractiveMode();
 
@@ -341,7 +341,7 @@ namespace SimpleBackup.InterfaceConsole
                     if (!string.IsNullOrWhiteSpace(newConfigName))
                     {
                         Array.Resize(ref QuickConfig.AppConfig.BackupConfigs, QuickConfig.AppConfig.BackupConfigs.Length + 1);
-                        QuickConfig.AppConfig.BackupConfigs[QuickConfig.AppConfig.BackupConfigs.Length - 1] = new BackupConfig() { Name = newConfigName };
+                        QuickConfig.AppConfig.BackupConfigs[^1] = new BackupConfig() { Name = newConfigName };
                         QuickConfig.Write();
                     }
                 }
@@ -460,7 +460,7 @@ namespace SimpleBackup.InterfaceConsole
             }
 
             BackupConfig selectedBackupConfig = QuickConfig.AppConfig.BackupConfigs[selectedBackupConfigI];
-            string backupDstPath = Paths.GenerateBackupName(
+            string backupDstPath = Generation.GenerateBackupName(
                 selectedBackupConfig.DestinationPath,
                 selectedBackupConfig.BackupType
             );

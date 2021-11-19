@@ -1,5 +1,5 @@
-﻿using SimpleBackup.Core.Configuration;
-using System.Windows;
+﻿using System.Windows;
+using SimpleBackup.Core.Configuration;
 
 namespace SimpleBackup.InterfaceWpf
 {
@@ -8,7 +8,7 @@ namespace SimpleBackup.InterfaceWpf
     /// </summary>
     public partial class App : Application
     {
-        public App() :base()
+        public App() : base()
         {
             QuickConfig.Read();
         }

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
-using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpZipLib.Tar;
 using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.Tar;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace SimpleBackup.Core.Backup
 {
@@ -106,7 +106,7 @@ namespace SimpleBackup.Core.Backup
                     bool isValid = pathsLeft.TryDequeue(out fileName);
                     if (!isValid) { return; }
 
-                    string fileDstPath = Paths.CombineFullPath(fileName, destinationPath);
+                    string fileDstPath = Paths.Generation.CombineFullPath(fileName, destinationPath);
                     Directory.CreateDirectory(Path.GetDirectoryName(fileDstPath));
                     File.Copy(fileName, fileDstPath);
                     CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
@@ -133,7 +133,7 @@ namespace SimpleBackup.Core.Backup
                 {
                     bool isValid = pathsLeft.TryDequeue(out fileName);
                     if (!isValid) { return; }
-                    string dstPath = Paths.CombineFullPath(fileName, "");
+                    string dstPath = Paths.Generation.CombineFullPath(fileName, "");
                     outStream.PutNextEntry(new ZipEntry(dstPath) { CompressionMethod = compressionMethod });
                     outStream.Write(File.ReadAllBytes(fileName));
                     CopyEvent?.Invoke(this, new BackupHandlerEventArgs(fileName));
@@ -160,7 +160,7 @@ namespace SimpleBackup.Core.Backup
                 {
                     bool isValid = pathsLeft.TryDequeue(out fileName);
                     if (!isValid) { return; }
-                    string dstPath = Paths.CombineFullPath(fileName, "");
+                    string dstPath = Paths.Generation.CombineFullPath(fileName, "");
                     TarEntry tarEntry = TarEntry.CreateEntryFromFile(fileName);
                     tarEntry.Name = dstPath;
                     tarArchive.WriteEntry(tarEntry, false);

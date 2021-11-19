@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.IO;
 
-namespace SimpleBackup.Core
+namespace SimpleBackup.Core.Paths
 {
-    public static class Paths
+    public static class Generation
     {
         /// <summary>
         /// Combines a src path into the dest path

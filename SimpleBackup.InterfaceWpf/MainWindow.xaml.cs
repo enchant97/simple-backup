@@ -7,6 +7,7 @@ using SimpleBackup.Core;
 using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
+using SimpleBackup.Core.Paths;
 
 namespace SimpleBackup.InterfaceWpf
 {
@@ -99,7 +100,7 @@ namespace SimpleBackup.InterfaceWpf
         {
             Application.Current.Dispatcher.BeginInvoke(HandleBackupStart);
 
-            string backupDstPath = Paths.GenerateBackupName(
+            string backupDstPath = Generation.GenerateBackupName(
                 currConfig.DestinationPath,
                 currConfig.BackupType
             );
