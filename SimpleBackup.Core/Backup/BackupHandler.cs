@@ -54,47 +54,35 @@ namespace SimpleBackup.Core.Backup
                 }
             }
         }
-        private void HandleDiscoveringExceptions(Exception exception, string searchPath)
+        private void HandleBackupExceptions(EventHandler<BackupHandlerErrorEventArgs> eventHandler, Exception exception, string path)
         {
-            if (pauseOnError) { Pause(); }
             if (exception is FileNotFoundException)
             {
-                ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NOT_FOUND));
+                eventHandler?.Invoke(this, new BackupHandlerErrorEventArgs(path, Constants.ErrorTypes.NOT_FOUND)); ;
             }
             else if (exception is IOException)
             {
-                ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
+                eventHandler?.Invoke(this, new BackupHandlerErrorEventArgs(path, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
             }
             else if (exception is UnauthorizedAccessException)
             {
-                ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.NO_PERMISSION));
+                eventHandler?.Invoke(this, new BackupHandlerErrorEventArgs(path, Constants.ErrorTypes.NO_PERMISSION));
             }
             else
             {
-                ExceptionDiscoveringEvent?.Invoke(this, new BackupHandlerErrorEventArgs(searchPath, Constants.ErrorTypes.UNHANDLED));
+                eventHandler?.Invoke(this, new BackupHandlerErrorEventArgs(path, Constants.ErrorTypes.UNHANDLED));
                 throw exception;
             }
+        }
+        private void HandleDiscoveringExceptions(Exception exception, string searchPath)
+        {
+            if (pauseOnError) { Pause(); }
+            HandleBackupExceptions(ExceptionDiscoveringEvent, exception, searchPath);
         }
         private void HandleCopyExceptions(Exception exception, string fileName)
         {
             if (pauseOnError) { Pause(); }
-            if (exception is FileNotFoundException)
-            {
-                ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NOT_FOUND));
-            }
-            else if (exception is IOException)
-            {
-                ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NOT_COPYABLE_TYPE));
-            }
-            else if (exception is UnauthorizedAccessException)
-            {
-                ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.NO_PERMISSION));
-            }
-            else
-            {
-                ExceptionCopyEvent?.Invoke(this, new BackupHandlerErrorEventArgs(fileName, Constants.ErrorTypes.UNHANDLED));
-                throw exception;
-            }
+            HandleBackupExceptions(ExceptionCopyEvent, exception, fileName);
         }
         private void CopyAsDirectory()
         {
