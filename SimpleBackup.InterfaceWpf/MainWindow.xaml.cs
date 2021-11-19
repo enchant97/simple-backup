@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 using SimpleBackup.Core;
 using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
@@ -45,6 +46,8 @@ namespace SimpleBackup.InterfaceWpf
         }
         private void RefreshUi()
         {
+            CurrConfigCB.ItemsSource = QuickConfig.AppConfig.BackupConfigs;
+            CurrConfigCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
             BackupConfig backupConfig = (BackupConfig)CurrConfigCB.SelectedItem;
             LastBackupLabel.Content = backupConfig.LastBackup;
             DestinationLabel.Content = backupConfig.DestinationPath;
@@ -149,6 +152,46 @@ namespace SimpleBackup.InterfaceWpf
         }
 
         #region Event Handlers
+        private void MenuImportConfigBnt_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show(
+                "Importing a config will replace your current saved one", "Confirm",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Question
+            );
+            if (result == MessageBoxResult.OK)
+            {
+                OpenFileDialog ofd = new()
+                {
+                    DefaultExt = ".xml",
+                    Filter = "XML files (.xml)|*.xml"
+                };
+                if (ofd.ShowDialog() == true)
+                {
+                    MainStatus.Content = "Importing new config";
+                    QuickConfig.Read(ofd.FileName);
+                    QuickConfig.Write();
+                    RefreshUi();
+                    MainStatus.Content = "Imported new config";
+                }
+            }
+        }
+
+        private void MenuExportConfigBnt_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog sfd = new()
+            {
+                DefaultExt = ".xml",
+                Filter = "XML files (.xml)|*.xml"
+            };
+            if (sfd.ShowDialog() == true)
+            {
+                MainStatus.Content = "Exporting config";
+                QuickConfig.Write(sfd.FileName);
+                MainStatus.Content = "Done Exporting config";
+            }
+        }
+
         private void MenuExitBnt_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();

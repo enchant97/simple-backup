@@ -25,12 +25,28 @@ namespace SimpleBackup.Core.Configuration
             AppConfig = Helpers.Read(Constants.ConfigFullPath);
         }
         /// <summary>
+        /// Read config from a specific file
+        /// </summary>
+        /// <param name="filename">the filename to read from</param>
+        public static void Read(string filename)
+        {
+            AppConfig = Helpers.Read(filename);
+        }
+        /// <summary>
         /// Write currently loaded config data
         /// </summary>
         public static void Write()
         {
             Directory.CreateDirectory(Constants.UserHomePath);
             Helpers.Write(Constants.ConfigFullPath, AppConfig);
+        }
+        /// <summary>
+        /// Write config to a specific file
+        /// </summary>
+        /// <param name="filename">the filename to save as</param>
+        public static void Write(string filename)
+        {
+            Helpers.Write(filename, AppConfig);
         }
         /// <summary>
         /// Reset the config to defaults

@@ -9,6 +9,9 @@
     <StackPanel>
         <Menu VerticalAlignment="Top">
             <MenuItem Header="_File">
+                <MenuItem x:Name="MenuImportConfigBnt" Header="_Import Config" Click="MenuImportConfigBnt_Click"/>
+                <MenuItem x:Name="MenuExportConfigBnt" Header="_Export Config" Click="MenuExportConfigBnt_Click"/>
+                <Separator/>
                 <MenuItem x:Name="MenuExitBnt" Header="_Exit" Click="MenuExitBnt_Click"/>
             </MenuItem>
             <MenuItem Header="_Edit">

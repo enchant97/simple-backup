@@ -39,6 +39,20 @@ namespace SimpleBackup.InterfaceWpf
             BackupTypeCB.SelectedItem = Enum.GetName(currConfig.BackupType);
         }
 
+        private void ResetBnt_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show(
+            "Reseting the app will delete all configs", "Confirm",
+            MessageBoxButton.OKCancel,
+            MessageBoxImage.Question
+            );
+            if (result == MessageBoxResult.OK)
+            {
+                QuickConfig.Reset();
+            }
+            Close();
+        }
+
         private void NewConfigBnt_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(NewConfigNameTB.Text))

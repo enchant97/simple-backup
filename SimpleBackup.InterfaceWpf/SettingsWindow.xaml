@@ -13,6 +13,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
@@ -22,6 +23,7 @@
                     <CheckBox x:Name="ShowHelpCB" Grid.Row="0" Grid.Column="1" Click="ShowHelpCB_Click"/>
                     <Label Grid.Row="1" Grid.Column="0" Content="Default Backup Config"/>
                     <ComboBox x:Name="DefaultBackupConfigCB" Grid.Row="1" Grid.Column="1" SelectionChanged="DefaultBackupConfigCB_SelectionChanged"/>
+                    <Button x:Name="ResetBnt" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="Reset Config" Click="ResetBnt_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Backup Config">
