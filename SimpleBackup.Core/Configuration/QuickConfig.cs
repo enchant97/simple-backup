@@ -11,7 +11,7 @@ namespace SimpleBackup.Core.Configuration
         /// <summary>
         /// The currently loaded config data
         /// </summary>
-        public static Types.AppConfig AppConfig;
+        public static Types.AppConfig AppConfig { get; private set; }
         /// <summary>
         /// Read config from file (creating one if missing)
         /// </summary>
@@ -22,7 +22,7 @@ namespace SimpleBackup.Core.Configuration
                 Directory.CreateDirectory(Constants.UserHomePath);
                 Helpers.WriteDefaults(Constants.ConfigFullPath);
             }
-            AppConfig = Helpers.Read(Constants.ConfigFullPath);
+            Read(Constants.ConfigFullPath);
         }
         /// <summary>
         /// Read config from a specific file
@@ -38,7 +38,7 @@ namespace SimpleBackup.Core.Configuration
         public static void Write()
         {
             Directory.CreateDirectory(Constants.UserHomePath);
-            Helpers.Write(Constants.ConfigFullPath, AppConfig);
+            Write(Constants.ConfigFullPath);
         }
         /// <summary>
         /// Write config to a specific file

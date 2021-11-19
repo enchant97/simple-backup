@@ -118,23 +118,23 @@ namespace SimpleBackup.InterfaceWpf
             );
 
             // setup events
-            backupHandler.DiscoveryEvent += (object sender, BackupHandlerEventArgs args) =>
+            backupHandler.DiscoveryEvent += (object? sender, BackupHandlerEventArgs args) =>
             {
                 Application.Current.Dispatcher.BeginInvoke(HandleBackupDiscovery);
             };
-            backupHandler.CopyEvent += (object sender, BackupHandlerEventArgs args) =>
+            backupHandler.CopyEvent += (object? sender, BackupHandlerEventArgs args) =>
             {
                 Application.Current.Dispatcher.BeginInvoke(HandleBackupCopied);
             };
-            backupHandler.ExceptionDiscoveringEvent += (object sender, BackupHandlerErrorEventArgs args) =>
+            backupHandler.ExceptionDiscoveringEvent += (object? sender, BackupHandlerErrorEventArgs args) =>
             {
                 Application.Current.Dispatcher.BeginInvoke(HandleBackupException, args);
             };
-            backupHandler.ExceptionCopyEvent += (object sender, BackupHandlerErrorEventArgs args) =>
+            backupHandler.ExceptionCopyEvent += (object? sender, BackupHandlerErrorEventArgs args) =>
             {
                 Application.Current.Dispatcher.BeginInvoke(HandleBackupException, args);
             };
-            backupHandler.FinishedEvent += (object sender, EventArgs args) =>
+            backupHandler.FinishedEvent += (object? sender, EventArgs args) =>
             {
                 if (currConfig.VersionsToKeep > 0)
                 {
