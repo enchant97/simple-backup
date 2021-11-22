@@ -11,5 +11,11 @@ namespace SimpleBackup.InterfaceWpf
         {
             InitializeComponent();
         }
+
+        private void LicencesBnt_Click(object sender, RoutedEventArgs e)
+        {
+            LicencesWindow licencesWindow = new() { Owner = this };
+            licencesWindow.ShowDialog();
+        }
     }
 }
