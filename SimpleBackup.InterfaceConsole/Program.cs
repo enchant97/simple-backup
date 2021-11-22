@@ -6,6 +6,7 @@ using SimpleBackup.Core.Backup;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
 using SimpleBackup.Core.Paths;
+using SimpleBackup.Resources;
 
 namespace SimpleBackup.InterfaceConsole
 {
@@ -52,7 +53,13 @@ namespace SimpleBackup.InterfaceConsole
             Console.Clear();
             Utils.ShowHeader();
             Console.WriteLine("License GPL-3.0\n");
-            Console.WriteLine(Constants.CopyrightText);
+            Console.WriteLine(Constants.CopyrightText);          
+            Utils.ShowResume();
+        }
+        static void ShowThirdPartyLicences()
+        {
+            Console.Clear();
+            Console.Write(Resource.ResourceManager.GetString("ThirdPartyLicences"));
             Utils.ShowResume();
         }
         static void ShowMenu()
@@ -63,6 +70,7 @@ namespace SimpleBackup.InterfaceConsole
             Console.WriteLine("\t(B)ackup -> Start a backup");
             Console.WriteLine("\t(C)onfigure -> View and edit app configuration");
             Console.WriteLine("\t(Cr)edits -> Show the credits");
+            Console.WriteLine("\t(Licences) -> View third party licences used in the app");
             Console.WriteLine("\t(H)elp -> Show help");
             Console.WriteLine("\t(Q)uit -> Exit the app");
             Console.WriteLine();
@@ -543,6 +551,9 @@ namespace SimpleBackup.InterfaceConsole
                         break;
                     case "cr":
                         ShowCredits();
+                        break;
+                    case "licences":
+                        ShowThirdPartyLicences();
                         break;
                     case "q":
                         run = false;
