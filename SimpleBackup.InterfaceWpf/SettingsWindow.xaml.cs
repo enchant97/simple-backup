@@ -177,5 +177,29 @@ namespace SimpleBackup.InterfaceWpf
             Constants.BackupType backupType = Enum.Parse<Constants.BackupType>((string)BackupTypeCB.SelectedItem);
             QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].BackupType = backupType;
         }
+
+        private void DeleteConfigBnt_Click(object sender, RoutedEventArgs e)
+        {
+            if (QuickConfig.AppConfig.BackupConfigs.Length <= 1)
+            {
+                QuickConfig.AppConfig.BackupConfigs[0] = new BackupConfig();
+                QuickConfig.AppConfig.DefaultConfigI = 0;
+
+                ConfigToEditCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
+                RefreshCurrBackupConfig();
+            }
+            else if (ConfigToEditCB.SelectedIndex != -1)
+            {
+                List<BackupConfig> backupConfigs = QuickConfig.AppConfig.BackupConfigs.ToList();
+                backupConfigs.RemoveAt(ConfigToEditCB.SelectedIndex);
+                QuickConfig.AppConfig.BackupConfigs = backupConfigs.ToArray();
+
+                if (ConfigToEditCB.SelectedIndex == QuickConfig.AppConfig.DefaultConfigI)
+                    QuickConfig.AppConfig.DefaultConfigI = 0;
+
+                ConfigToEditCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
+                RefreshCurrBackupConfig();
+            }
+        }
     }
 }

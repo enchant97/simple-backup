@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:core="clr-namespace:SimpleBackup.Core;assembly=SimpleBackup.Core"
         mc:Ignorable="d"
-        Title="Settings" Height="590" Width="380" MinHeight="590" MinWidth="380" WindowStartupLocation="CenterOwner">
+        Title="Settings" Height="610" Width="380" MinHeight="610" MinWidth="380" WindowStartupLocation="CenterOwner">
     <StackPanel>
         <TabControl>
             <TabItem Header="General">
@@ -56,6 +56,7 @@
                                 <RowDefinition/>
                                 <RowDefinition/>
                                 <RowDefinition/>
+                                <RowDefinition/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
@@ -88,6 +89,7 @@
                             <TextBox x:Name="VersionsToKeepTB" Grid.Row="8" Grid.Column="1" TextChanged="VersionsToKeepTB_TextChanged"/>
                             <Label Grid.Row="9" Grid.Column="0" Content="Backup Type"/>
                             <ComboBox x:Name="BackupTypeCB" Grid.Row="9" Grid.Column="1" SelectionChanged="BackupTypeCB_SelectionChanged"/>
+                            <Button x:Name="DeleteConfigBnt" Content="Delete Config" Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Click="DeleteConfigBnt_Click"/>
                         </Grid>
                     </GroupBox>
                 </StackPanel>
