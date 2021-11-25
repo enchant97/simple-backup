@@ -132,8 +132,8 @@ namespace SimpleBackup.InterfaceGtk.Views
 
             BackupHandler backupHandler = new(
                 backupDstPath,
-                currConfig.IncludedPaths,
-                currConfig.ExcludedPaths,
+                currConfig.IncludedPaths.ToArray(),
+                currConfig.ExcludedPaths.ToArray(),
                 QuickConfig.AppConfig.ExcludedFilenames,
                 currConfig.BackupType,
                 false
@@ -195,8 +195,7 @@ namespace SimpleBackup.InterfaceGtk.Views
             {
                 if (!string.IsNullOrEmpty(dialog.Input))
                 {
-                    Array.Resize(ref QuickConfig.AppConfig.BackupConfigs, QuickConfig.AppConfig.BackupConfigs.Length + 1);
-                    QuickConfig.AppConfig.BackupConfigs[^1] = new BackupConfig() { Name = dialog.Input };
+                    QuickConfig.AppConfig.BackupConfigs.Add(new BackupConfig() { Name = dialog.Input });
                     QuickConfig.Write();
                 }
             }
@@ -233,15 +232,16 @@ namespace SimpleBackup.InterfaceGtk.Views
         }
         private void OnConfigDeleteCurrent(object obj, EventArgs args)
         {
-            if (QuickConfig.AppConfig.BackupConfigs.Length <= 1)
-                QuickConfig.AppConfig.BackupConfigs = new[] { new BackupConfig() };
+            if (QuickConfig.AppConfig.BackupConfigs.Count <= 1)
+            {
+                QuickConfig.AppConfig.BackupConfigs.Clear();
+                QuickConfig.AppConfig.BackupConfigs.Add(new BackupConfig());
+            }
             else
             {
-                List<BackupConfig> configs = QuickConfig.AppConfig.BackupConfigs.ToList();
-                configs.RemoveAt(currConfigI);
-                QuickConfig.AppConfig.BackupConfigs = configs.ToArray();
+                QuickConfig.AppConfig.BackupConfigs.RemoveAt(currConfigI);
                 // reset default config as it's now out of range
-                if (QuickConfig.AppConfig.DefaultConfigI >= QuickConfig.AppConfig.BackupConfigs.Length ||
+                if (QuickConfig.AppConfig.DefaultConfigI >= QuickConfig.AppConfig.BackupConfigs.Count ||
                         QuickConfig.AppConfig.DefaultConfigI > currConfigI)
                     QuickConfig.AppConfig.DefaultConfigI = 0;
             }
@@ -279,12 +279,12 @@ namespace SimpleBackup.InterfaceGtk.Views
                 this,
                 "Included Paths",
                 "Modify Or View The Included Paths",
-                QuickConfig.AppConfig.BackupConfigs[currConfigI].IncludedPaths
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].IncludedPaths.ToArray()
             );
             var response = dialog.Run();
             if (response == ((int)ResponseType.Ok))
             {
-                QuickConfig.AppConfig.BackupConfigs[currConfigI].IncludedPaths = dialog.Choices;
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].IncludedPaths = dialog.Choices.ToList();
                 QuickConfig.Write();
             }
             dialog.Destroy();
@@ -295,12 +295,12 @@ namespace SimpleBackup.InterfaceGtk.Views
                 this,
                 "Excluded Paths",
                 "Modify Or View The Excluded Paths",
-                QuickConfig.AppConfig.BackupConfigs[currConfigI].ExcludedPaths
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].ExcludedPaths.ToArray()
             );
             var response = dialog.Run();
             if (response == ((int)ResponseType.Ok))
             {
-                QuickConfig.AppConfig.BackupConfigs[currConfigI].ExcludedPaths = dialog.Choices;
+                QuickConfig.AppConfig.BackupConfigs[currConfigI].ExcludedPaths = dialog.Choices.ToList();
                 QuickConfig.Write();
             }
             dialog.Destroy();

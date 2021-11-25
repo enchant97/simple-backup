@@ -110,8 +110,8 @@ namespace SimpleBackup.InterfaceWpf
 
             BackupHandler backupHandler = new(
                 backupDstPath,
-                currConfig.IncludedPaths,
-                currConfig.ExcludedPaths,
+                currConfig.IncludedPaths.ToArray(),
+                currConfig.ExcludedPaths.ToArray(),
                 QuickConfig.AppConfig.ExcludedFilenames,
                 currConfig.BackupType,
                 false

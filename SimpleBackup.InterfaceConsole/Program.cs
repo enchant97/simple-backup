@@ -25,10 +25,10 @@ namespace SimpleBackup.InterfaceConsole
             switch (includedOrExcluded)
             {
                 case IncludedOrExcluded.INCLUDED:
-                    QuickConfig.AppConfig.BackupConfigs[currentIndex].IncludedPaths = newPaths;
+                    QuickConfig.AppConfig.BackupConfigs[currentIndex].IncludedPaths = newPaths.ToList();
                     break;
                 case IncludedOrExcluded.EXCLUDED:
-                    QuickConfig.AppConfig.BackupConfigs[currentIndex].ExcludedPaths = newPaths;
+                    QuickConfig.AppConfig.BackupConfigs[currentIndex].ExcludedPaths = newPaths.ToList();
                     break;
             }
             QuickConfig.Write();
@@ -198,8 +198,8 @@ namespace SimpleBackup.InterfaceConsole
                 Console.WriteLine("CONFIG - {0}\n", selectedConfig.Name);
                 Console.WriteLine("\t(1) -> Name = {0}", selectedConfig.Name);
                 Console.WriteLine("\t(2) -> Destination Path = {0}", selectedConfig.DestinationPath);
-                Console.WriteLine("\t(3) -> Included Paths = {0} Paths", selectedConfig.IncludedPaths.Length);
-                Console.WriteLine("\t(4) -> Excluded Paths = {0} Paths", selectedConfig.ExcludedPaths.Length);
+                Console.WriteLine("\t(3) -> Included Paths = {0} Paths", selectedConfig.IncludedPaths.Count);
+                Console.WriteLine("\t(4) -> Excluded Paths = {0} Paths", selectedConfig.ExcludedPaths.Count);
                 Console.WriteLine("\t(5) -> Versions To Keep = {0}", selectedConfig.VersionsToKeep);
                 Console.WriteLine("\t(6) -> Backup Type = {0}", Enum.GetName(selectedConfig.BackupType));
                 Console.WriteLine("\t(R)ename -> Rename the config name");
@@ -227,15 +227,14 @@ namespace SimpleBackup.InterfaceConsole
                     bool deleteConfirm = Utils.ShowYesNoInput("Are You Sure You Want To Delete This Config?");
                     if (deleteConfirm)
                     {
-                        if (QuickConfig.AppConfig.BackupConfigs.Length <= 1)
+                        if (QuickConfig.AppConfig.BackupConfigs.Count <= 1)
                         {
-                            QuickConfig.AppConfig.BackupConfigs = new[] { new BackupConfig() };
+                            QuickConfig.AppConfig.BackupConfigs.Clear();
+                            QuickConfig.AppConfig.BackupConfigs.Add(new BackupConfig());
                         }
                         else
                         {
-                            List<BackupConfig> configs = QuickConfig.AppConfig.BackupConfigs.ToList();
-                            configs.RemoveAt(configIndex);
-                            QuickConfig.AppConfig.BackupConfigs = configs.ToArray();
+                            QuickConfig.AppConfig.BackupConfigs.RemoveAt(configIndex);
                         }
                         QuickConfig.Write();
                         return;
@@ -289,7 +288,7 @@ namespace SimpleBackup.InterfaceConsole
         }
         static void InteractiveDefaultBackupConfigMenu()
         {
-            int configsCount = QuickConfig.AppConfig.BackupConfigs.Length;
+            int configsCount = QuickConfig.AppConfig.BackupConfigs.Count;
             while (true)
             {
                 Console.Clear();
@@ -329,7 +328,7 @@ namespace SimpleBackup.InterfaceConsole
                 Utils.ShowHeader();
                 Console.WriteLine("CONFIG\n");
 
-                int configsCount = QuickConfig.AppConfig.BackupConfigs.Length;
+                int configsCount = QuickConfig.AppConfig.BackupConfigs.Count;
                 for (int i = 0; i < configsCount; i++)
                 {
                     var config = QuickConfig.AppConfig.BackupConfigs[i];
@@ -348,8 +347,7 @@ namespace SimpleBackup.InterfaceConsole
                     string newConfigName = Utils.ShowStringInput("Enter New Config Name");
                     if (!string.IsNullOrWhiteSpace(newConfigName))
                     {
-                        Array.Resize(ref QuickConfig.AppConfig.BackupConfigs, QuickConfig.AppConfig.BackupConfigs.Length + 1);
-                        QuickConfig.AppConfig.BackupConfigs[^1] = new BackupConfig() { Name = newConfigName };
+                        QuickConfig.AppConfig.BackupConfigs.Add(new BackupConfig() { Name = newConfigName });
                         QuickConfig.Write();
                     }
                 }
@@ -393,7 +391,7 @@ namespace SimpleBackup.InterfaceConsole
                 Utils.ShowHeader();
                 Console.WriteLine("CONFIG SELECT\n");
 
-                int configsCount = QuickConfig.AppConfig.BackupConfigs.Length;
+                int configsCount = QuickConfig.AppConfig.BackupConfigs.Count;
                 for (int i = 0; i < configsCount; i++)
                 {
                     Console.WriteLine("\t({0}) -> {1}", i + 1, QuickConfig.AppConfig.BackupConfigs[i].Name);
@@ -479,8 +477,8 @@ namespace SimpleBackup.InterfaceConsole
 
             BackupHandler backupHandler = new(
                 backupDstPath,
-                selectedBackupConfig.IncludedPaths,
-                selectedBackupConfig.ExcludedPaths,
+                selectedBackupConfig.IncludedPaths.ToArray(),
+                selectedBackupConfig.ExcludedPaths.ToArray(),
                 QuickConfig.AppConfig.ExcludedFilenames,
                 selectedBackupConfig.BackupType,
                 false

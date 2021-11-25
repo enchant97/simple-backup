@@ -1,4 +1,5 @@
 using System.IO;
+using SimpleBackup.Core.Configuration.Types;
 
 // TODO add events for when config is changed in-memory
 namespace SimpleBackup.Core.Configuration
@@ -31,6 +32,10 @@ namespace SimpleBackup.Core.Configuration
         public static void Read(string filename)
         {
             AppConfig = Helpers.Read(filename);
+            if (AppConfig.BackupConfigs.Count == 0)
+            {
+                AppConfig.BackupConfigs.Add(new BackupConfig());
+            }
         }
         /// <summary>
         /// Write currently loaded config data

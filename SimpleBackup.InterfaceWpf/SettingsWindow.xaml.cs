@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Ookii.Dialogs.Wpf;
@@ -65,8 +63,7 @@ namespace SimpleBackup.InterfaceWpf
                 return;
             }
             BackupConfig backupConfig = new() { Name = NewConfigNameTB.Text };
-            Array.Resize(ref QuickConfig.AppConfig.BackupConfigs, QuickConfig.AppConfig.BackupConfigs.Length + 1);
-            QuickConfig.AppConfig.BackupConfigs[^1] = backupConfig;
+            QuickConfig.AppConfig.BackupConfigs.Add(backupConfig);
 
             NewConfigNameTB.Clear();
             DefaultBackupConfigCB.Items.Refresh();
@@ -94,11 +91,8 @@ namespace SimpleBackup.InterfaceWpf
             };
             if (dialog.ShowDialog() == true)
             {
-                string[] includedPaths = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths;
-                Array.Resize(ref includedPaths, includedPaths.Length + 1);
-                includedPaths[^1] = dialog.SelectedPath;
-                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths = includedPaths;
-                IncludedPathsLB.ItemsSource = includedPaths;
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths.Add(dialog.SelectedPath);
+                IncludedPathsLB.Items.Refresh();
             }
         }
 
@@ -106,10 +100,8 @@ namespace SimpleBackup.InterfaceWpf
         {
             if (IncludedPathsLB.SelectedItem != null)
             {
-                List<string> includedPaths = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths.ToList();
-                includedPaths.RemoveAt(IncludedPathsLB.SelectedIndex);
-                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths = includedPaths.ToArray();
-                IncludedPathsLB.ItemsSource = includedPaths;
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].IncludedPaths.RemoveAt(IncludedPathsLB.SelectedIndex);
+                IncludedPathsLB.Items.Refresh();
             }
         }
 
@@ -121,11 +113,8 @@ namespace SimpleBackup.InterfaceWpf
             };
             if (dialog.ShowDialog() == true)
             {
-                string[] excludedPaths = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths;
-                Array.Resize(ref excludedPaths, excludedPaths.Length + 1);
-                excludedPaths[^1] = dialog.SelectedPath;
-                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths = excludedPaths;
-                ExcludedPathsLB.ItemsSource = excludedPaths;
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths.Add(dialog.SelectedPath);
+                ExcludedPathsLB.Items.Refresh();
             }
         }
 
@@ -133,10 +122,8 @@ namespace SimpleBackup.InterfaceWpf
         {
             if (ExcludedPathsLB.SelectedItem != null)
             {
-                List<string> excludedPaths = QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths.ToList();
-                excludedPaths.RemoveAt(ExcludedPathsLB.SelectedIndex);
-                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths = excludedPaths.ToArray();
-                ExcludedPathsLB.ItemsSource = excludedPaths;
+                QuickConfig.AppConfig.BackupConfigs[ConfigToEditCB.SelectedIndex].ExcludedPaths.RemoveAt(ExcludedPathsLB.SelectedIndex);
+                ExcludedPathsLB.Items.Refresh();
             }
         }
 
@@ -180,26 +167,23 @@ namespace SimpleBackup.InterfaceWpf
 
         private void DeleteConfigBnt_Click(object sender, RoutedEventArgs e)
         {
-            if (QuickConfig.AppConfig.BackupConfigs.Length <= 1)
+            if (QuickConfig.AppConfig.BackupConfigs.Count <= 1)
             {
                 QuickConfig.AppConfig.BackupConfigs[0] = new BackupConfig();
                 QuickConfig.AppConfig.DefaultConfigI = 0;
 
-                ConfigToEditCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
-                RefreshCurrBackupConfig();
+                ConfigToEditCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;               
             }
             else if (ConfigToEditCB.SelectedIndex != -1)
             {
-                List<BackupConfig> backupConfigs = QuickConfig.AppConfig.BackupConfigs.ToList();
-                backupConfigs.RemoveAt(ConfigToEditCB.SelectedIndex);
-                QuickConfig.AppConfig.BackupConfigs = backupConfigs.ToArray();
+                QuickConfig.AppConfig.BackupConfigs.RemoveAt(ConfigToEditCB.SelectedIndex);
 
                 if (ConfigToEditCB.SelectedIndex == QuickConfig.AppConfig.DefaultConfigI)
                     QuickConfig.AppConfig.DefaultConfigI = 0;
 
                 ConfigToEditCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
-                RefreshCurrBackupConfig();
             }
+            RefreshCurrBackupConfig();
         }
     }
 }
