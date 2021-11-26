@@ -29,6 +29,8 @@ namespace SimpleBackup.InterfaceWpf
             raisedErrors = new List<string>();
             CurrConfigCB.ItemsSource = QuickConfig.AppConfig.BackupConfigs;
             CurrConfigCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
+
+            Loaded += OnWindowLoad;
         }
 
         #region Helpers
@@ -152,6 +154,19 @@ namespace SimpleBackup.InterfaceWpf
         }
 
         #region Event Handlers
+        private void OnWindowLoad(object sender, RoutedEventArgs e)
+        {
+            // show inital help dialog if needed
+            if (QuickConfig.AppConfig.ShowHelp)
+            {
+                GetStartedWindow getStartedWindow = new() { Owner = this };
+                _ = getStartedWindow.ShowDialog();
+
+                QuickConfig.AppConfig.ShowHelp = false;
+                QuickConfig.Write();
+            }
+        }
+
         private void MenuImportConfigBnt_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show(
