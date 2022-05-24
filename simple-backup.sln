@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleBackup.Resources", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleBackup.InterfaceWpf", "SimpleBackup.InterfaceWpf\SimpleBackup.InterfaceWpf.csproj", "{AB974381-D39E-4CD5-BE15-11DE01D8E65F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBackup.UnitTests", "SimpleBackup.UnitTests\SimpleBackup.UnitTests.csproj", "{0F668E06-A7D9-4148-8AC3-40D4F5F6295F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleBackup.UnitTests", "SimpleBackup.UnitTests\SimpleBackup.UnitTests.csproj", "{0F668E06-A7D9-4148-8AC3-40D4F5F6295F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleBackup.InterfaceAvalonia", "SimpleBackup.InterfaceAvalonia\SimpleBackup.InterfaceAvalonia.csproj", "{27FFCF0C-CE25-49F9-9159-9152CCB9206D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,18 @@ Global
 		{0F668E06-A7D9-4148-8AC3-40D4F5F6295F}.Release|x64.Build.0 = Release|Any CPU
 		{0F668E06-A7D9-4148-8AC3-40D4F5F6295F}.Release|x86.ActiveCfg = Release|Any CPU
 		{0F668E06-A7D9-4148-8AC3-40D4F5F6295F}.Release|x86.Build.0 = Release|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Debug|x64.Build.0 = Debug|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Debug|x86.Build.0 = Debug|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Release|x64.ActiveCfg = Release|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Release|x64.Build.0 = Release|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Release|x86.ActiveCfg = Release|Any CPU
+		{27FFCF0C-CE25-49F9-9159-9152CCB9206D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
