@@ -1,0 +1,19 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="155"
+		x:Class="SimpleBackup.InterfaceAvalonia.GettingStartedWindow"
+		Title="Getting Started"
+		Width="500" Height="155" WindowStartupLocation="CenterOwner">
+	<TextBlock TextWrapping="Wrap">
+		Welcome to Simple Backup, here is some help to get you started:
+
+- You can do full-backups
+- You can include and exclude paths to backup
+- You can set versions of backups to keep
+- You can keep different configurations for backups
+- Once everything is configured you can backup with one command
+- All configs are stored in a xml file
+	</TextBlock>
+</Window>

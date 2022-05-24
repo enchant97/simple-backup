@@ -12,13 +12,13 @@
 				<MenuItem Name="MenuImportConfigBnt" Header="_Import Config" />
 				<MenuItem Name="MenuExportConfigBnt" Header="_Export Config" />
 				<Separator/>
-				<MenuItem Name="MenuExitBnt" Header="_Exit" />
+				<MenuItem Name="MenuExitBnt" Header="_Exit" Click="OnClickMenuExit" />
 			</MenuItem>
 			<MenuItem Header="_Edit">
 				<MenuItem Name="MenuPreferencesBnt" Header="_Preferences" />
 			</MenuItem>
 			<MenuItem Header="_Help">
-				<MenuItem Name="MenuGetStartedBnt" Header="_Get Started" />
+				<MenuItem Name="MenuGetStartedBnt" Header="_Get Started" Click="OnClickMenuGettingStarted" />
 				<MenuItem Name="MenuAboutBnt" Header="_About" Click="OnClickMenuAbout"/>
 			</MenuItem>
 		</Menu>
