@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 
 namespace SimpleBackup.InterfaceAvalonia
 {
@@ -7,6 +8,12 @@ namespace SimpleBackup.InterfaceAvalonia
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        public void OnClickMenuAbout(object sender, RoutedEventArgs e)
+        {
+            AboutWindow window = new();
+            window.ShowDialog(this);
         }
     }
 }

@@ -1,0 +1,16 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="400"
+		x:Class="SimpleBackup.InterfaceAvalonia.AboutWindow"
+		Title="About"
+		Height="400" Width="300" CanResize="False" WindowStartupLocation="CenterOwner">
+	<StackPanel>
+		<Label FontSize="20" HorizontalAlignment="Center" Content="Simple Backup"/>
+		<TextBlock Text="A .net6 app with a Avalonia GUI for creating backups, designed to be easy to use" TextWrapping="Wrap" Margin="0,0,0,10"/>
+		<TextBlock Text="Created by: Leo Spratt" TextWrapping="Wrap" FontSize="10" Margin="0,0,0,5"/>
+		<TextBlock Text="This program comes with absolutely no warranty. See the GNU General Public License, version 3 or later for details." TextWrapping="Wrap" FontSize="8"/>
+		<TextBox Name="LicenseTB" ScrollViewer.VerticalScrollBarVisibility="Visible" Height="288" TextWrapping="Wrap" />
+	</StackPanel>
+</Window>
