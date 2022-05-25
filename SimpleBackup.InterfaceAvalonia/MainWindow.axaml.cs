@@ -4,6 +4,8 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.Enums;
 using MessageBox.Avalonia.BaseWindows.Base;
 using SimpleBackup.Core.Configuration;
+using System;
+using SimpleBackup.Core.Configuration.Types;
 
 namespace SimpleBackup.InterfaceAvalonia
 {
@@ -11,8 +13,20 @@ namespace SimpleBackup.InterfaceAvalonia
     {
         public MainWindow()
         {
-            Initialized += (sender, evt) => OnWindowLoad();
+            Opened += (sender, evt) => OnWindowLoad();
             InitializeComponent();
+            ShowCurrentConfigUI();
+        }
+        private void ShowCurrentConfigUI()
+        {
+            CurrConfigCB.Items = QuickConfig.AppConfig.BackupConfigs;
+            CurrConfigCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
+            if (CurrConfigCB.SelectedItem != null) { 
+                BackupConfig backupConfig = (BackupConfig)CurrConfigCB.SelectedItem;
+                LastBackupLabel.Content = backupConfig.LastBackup;
+                DestinationLabel.Content = backupConfig.DestinationPath;
+                TypeLabel.Content = Enum.GetName(backupConfig.BackupType);
+            }
         }
         #region Events
         private void OnWindowLoad()

@@ -40,9 +40,9 @@
 			<Label Grid.Column="0" Grid.Row="1" Content="Last Backup"/>
 			<Label Name="LastBackupLabel" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Content=""/>
 			<Label Grid.Column="0" Grid.Row="2" Content="Destination"/>
-			<Label Name="DestinationLabel" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Content=""/>
+			<Label Name="DestinationLabel" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" Content=""/>
 			<Label Grid.Column="0" Grid.Row="3" Content="Type"/>
-			<Label Name="TypeLabel" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Content=""/>
+			<Label Name="TypeLabel" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" Content=""/>
 		</Grid>
 		<Label FontSize="16" Content="Backup"/>
 		<StackPanel Spacing="2">
