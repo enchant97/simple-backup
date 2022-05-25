@@ -15,12 +15,16 @@ namespace SimpleBackup.InterfaceAvalonia
         {
             Opened += (sender, evt) => OnWindowLoad();
             InitializeComponent();
-            ShowCurrentConfigUI();
+            ShowBackupConfigs();
+            ShowSelectedConfigOnUI();
         }
-        private void ShowCurrentConfigUI()
+        private void ShowBackupConfigs()
         {
             CurrConfigCB.Items = QuickConfig.AppConfig.BackupConfigs;
             CurrConfigCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
+        }
+        private void ShowSelectedConfigOnUI()
+        {
             if (CurrConfigCB.SelectedItem != null) { 
                 BackupConfig backupConfig = (BackupConfig)CurrConfigCB.SelectedItem;
                 LastBackupLabel.Content = backupConfig.LastBackup;
@@ -107,6 +111,10 @@ namespace SimpleBackup.InterfaceAvalonia
         {
             AboutWindow window = new();
             window.ShowDialog(this);
+        }
+        private void OnSelectionCurrConfigCB(object sender, SelectionChangedEventArgs e)
+        {
+            ShowSelectedConfigOnUI();
         }
         #endregion
     }
