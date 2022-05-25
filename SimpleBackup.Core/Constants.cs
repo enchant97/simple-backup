@@ -12,10 +12,15 @@ namespace SimpleBackup.Core
             ".config",
             "simple-backup"
         );
+#if DEBUG
+        public static readonly string ConfigFullPath = ConfigFilename;
+#else
         public static readonly string ConfigFullPath = Path.Join(
             UserHomePath,
             ConfigFilename
         );
+#endif
+
         public const string CopyrightText = @"Copyright(C) 2021  Leo Spratt
 
     This program is free software: you can redistribute it and/or modify
