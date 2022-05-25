@@ -8,7 +8,7 @@
 		Width="240" Height="150" MinWidth="200" MinHeight="150" WindowStartupLocation="CenterOwner">
 	<StackPanel Spacing="2">
 		<Label HorizontalAlignment="Center" FontSize="26" Content="Settings"/>
-		<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="General"/>
+		<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="General" Click="OnClickGeneral"/>
 		<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="New Config" Click="OnClickNewConfig"/>
 		<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Edit Config"/>
 	</StackPanel>

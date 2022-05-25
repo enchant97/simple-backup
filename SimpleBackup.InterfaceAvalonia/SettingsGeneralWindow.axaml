@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="165"
+		x:Class="SimpleBackup.InterfaceAvalonia.SettingsGeneralWindow"
+		Title="General Settings"
+		Width="300" Height="165" MinWidth="300" MinHeight="165" WindowStartupLocation="CenterOwner">
+	<StackPanel>
+		<Label HorizontalAlignment="Center" FontSize="26" Content="General"/>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+			<Label Grid.Column="0" Grid.Row="0" Content="Show Help"/>
+			<CheckBox Name="ShowHelpCB" Grid.Column="1" Grid.Row="0"/>
+			<Label Grid.Column="0" Grid.Row="1" Content="Default Config"/>
+			<ComboBox Name="DefaultConfigCB" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"/>
+			<Button Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Reset To Defaults" Click="OnClickResetApp"/>
+			<Button Grid.Column="0" Grid.Row="3" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Cancel" Click="OnClickCancel"/>
+			<Button Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Save" Click="OnClickSave"/>
+		</Grid>
+	</StackPanel>
+</Window>
