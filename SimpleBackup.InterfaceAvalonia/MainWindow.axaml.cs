@@ -18,6 +18,7 @@ namespace SimpleBackup.InterfaceAvalonia
             ShowBackupConfigs();
             ShowSelectedConfigOnUI();
         }
+        #region UI Helpers
         private void ShowBackupConfigs()
         {
             CurrConfigCB.Items = QuickConfig.AppConfig.BackupConfigs;
@@ -32,6 +33,7 @@ namespace SimpleBackup.InterfaceAvalonia
                 TypeLabel.Content = Enum.GetName(backupConfig.BackupType);
             }
         }
+        #endregion
         #region Events
         private void OnWindowLoad()
         {
@@ -101,6 +103,14 @@ namespace SimpleBackup.InterfaceAvalonia
         private void OnClickMenuExit(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+        private async void OnClickMenuSettings(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow window = new();
+            await window.ShowDialog(this);
+
+            ShowBackupConfigs();
+            ShowSelectedConfigOnUI();
         }
         private void OnClickMenuGettingStarted(object sender, RoutedEventArgs e)
         {

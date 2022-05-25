@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="240" d:DesignHeight="150"
+		x:Class="SimpleBackup.InterfaceAvalonia.SettingsWindow"
+		Title="Settings"
+		Width="240" Height="150" MinWidth="200" MinHeight="150" WindowStartupLocation="CenterOwner">
+	<StackPanel Spacing="2">
+		<Label HorizontalAlignment="Center" FontSize="26" Content="Settings"/>
+		<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="General"/>
+		<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="New Config" Click="OnClickNewConfig"/>
+		<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Edit Config"/>
+	</StackPanel>
+</Window>

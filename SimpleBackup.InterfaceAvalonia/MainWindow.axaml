@@ -15,7 +15,7 @@
 				<MenuItem Name="MenuExitBnt" Header="_Exit" Click="OnClickMenuExit" />
 			</MenuItem>
 			<MenuItem Header="_Edit">
-				<MenuItem Name="MenuPreferencesBnt" Header="_Preferences" />
+				<MenuItem Name="MenuPreferencesBnt" Header="_Preferences" Click="OnClickMenuSettings" />
 			</MenuItem>
 			<MenuItem Header="_Help">
 				<MenuItem Name="MenuGetStartedBnt" Header="_Get Started" Click="OnClickMenuGettingStarted" />
