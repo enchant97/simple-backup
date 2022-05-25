@@ -9,8 +9,8 @@
 	<StackPanel >
 		<Menu VerticalAlignment="Top">
 			<MenuItem Header="_File">
-				<MenuItem Name="MenuImportConfigBnt" Header="_Import Config" />
-				<MenuItem Name="MenuExportConfigBnt" Header="_Export Config" />
+				<MenuItem Name="MenuImportConfigBnt" Header="_Import Config" Click="OnClickMenuImportConfig" />
+				<MenuItem Name="MenuExportConfigBnt" Header="_Export Config" Click="OnClickMenuExportConfig" />
 				<Separator/>
 				<MenuItem Name="MenuExitBnt" Header="_Exit" Click="OnClickMenuExit" />
 			</MenuItem>
