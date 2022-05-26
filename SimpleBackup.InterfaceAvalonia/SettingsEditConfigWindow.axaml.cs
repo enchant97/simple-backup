@@ -3,6 +3,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using MessageBox.Avalonia;
+using MessageBox.Avalonia.BaseWindows.Base;
+using MessageBox.Avalonia.Enums;
 using SimpleBackup.Core.Configuration;
 using SimpleBackup.Core.Configuration.Types;
 using static SimpleBackup.Core.Constants;
@@ -76,9 +79,18 @@ namespace SimpleBackup.InterfaceAvalonia
                 CurrentDestination.Content = path;
             }
         }
-        private void OnClickDeleteConfig(object sender, RoutedEventArgs e)
+        private async void OnClickDeleteConfig(object sender, RoutedEventArgs e)
         {
-            // TODO add delete confirm dialog
+            IMsBoxWindow<ButtonResult> prompt = MessageBoxManager.GetMessageBoxStandardWindow(
+                    "Confirm",
+                    "This will delete the config, continue?",
+                    ButtonEnum.YesNo,
+                    MessageBox.Avalonia.Enums.Icon.Question
+            );
+            ButtonResult result = await prompt.ShowDialog(this);
+            if (result == ButtonResult.No)
+                return;
+
             if (QuickConfig.AppConfig.BackupConfigs.Count <= 1)
             {
                 QuickConfig.AppConfig.BackupConfigs[0] = new BackupConfig();
@@ -106,7 +118,13 @@ namespace SimpleBackup.InterfaceAvalonia
             if (configName.Length == 0)
             {
                 System.Diagnostics.Debug.WriteLine("ConfigName is empty");
-                // TODO show user error here
+                IMsBoxWindow<ButtonResult> prompt = MessageBoxManager.GetMessageBoxStandardWindow(
+                    "Cannot Save",
+                    "Cannot save as the config name cannot be blank",
+                    ButtonEnum.Ok,
+                    MessageBox.Avalonia.Enums.Icon.Warning
+                );
+                prompt.ShowDialog(this);
                 return;
             }
             QuickConfig.AppConfig.BackupConfigs[selectedConfigI].Name = configName;
