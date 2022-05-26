@@ -2,10 +2,10 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="310"
+		mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="380"
 		x:Class="SimpleBackup.InterfaceAvalonia.MainWindow"
 		Title="SimpleBackup"
-		Width="400" Height="310" CanResize="False" WindowStartupLocation="CenterScreen">
+		Width="400" Height="380" CanResize="False" WindowStartupLocation="CenterScreen">
 	<StackPanel >
 		<Menu VerticalAlignment="Top">
 			<MenuItem Header="_File">
@@ -46,8 +46,8 @@
 		</Grid>
 		<Label FontSize="16" Content="Backup"/>
 		<StackPanel Spacing="2">
-			<Button Name="StartBackupBnt" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Start" />
-			<Button Name="ShowErrorsBnt" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Show Errors(0)" />
+			<Button Name="StartBackupBnt" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Start Backup" Click="OnClickStartStopBackup" />
+			<ListBox Height="100" Name="LoggedErrorsLB"/>
 		</StackPanel>
 		<Label Name="MainStatus" VerticalAlignment="Bottom" Content="Ok"/>
 	</StackPanel>
