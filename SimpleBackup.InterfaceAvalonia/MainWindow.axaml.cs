@@ -188,8 +188,9 @@ namespace SimpleBackup.InterfaceAvalonia
         {
             IMsBoxWindow<ButtonResult> prompt = MessageBoxManager.GetMessageBoxStandardWindow(
                 "Confirm",
-                "Importing a new config will\noverwrite your current one.",
-                ButtonEnum.OkCancel
+                "Importing a new config will overwrite your current one.",
+                ButtonEnum.OkCancel,
+                MessageBox.Avalonia.Enums.Icon.Warning
             );
             ButtonResult promptResult = await prompt.Show();
             if (promptResult == ButtonResult.Ok)

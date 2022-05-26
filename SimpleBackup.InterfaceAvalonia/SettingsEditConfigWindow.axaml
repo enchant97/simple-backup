@@ -2,10 +2,10 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="590"
+		mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
 		x:Class="SimpleBackup.InterfaceAvalonia.SettingsEditConfigWindow"
 		Title="Edit Config"
-		Width="500" Height="590" WindowStartupLocation="CenterOwner">
+		Width="500" Height="600" WindowStartupLocation="CenterOwner">
 	<StackPanel>
 		<Label HorizontalAlignment="Center" FontSize="26" Content="Edit Config"/>
 		<Grid>

@@ -24,8 +24,9 @@ namespace SimpleBackup.InterfaceAvalonia
         {
             IMsBoxWindow<ButtonResult> prompt = MessageBoxManager.GetMessageBoxStandardWindow(
                 "Confirm",
-                "This will reset the app config\nthere will be no going back",
-                ButtonEnum.OkCancel
+                "This will reset the app config there will be no going back",
+                ButtonEnum.OkCancel,
+                MessageBox.Avalonia.Enums.Icon.Warning
             );
             ButtonResult promptResult = await prompt.Show();
             if (promptResult == ButtonResult.Ok)
