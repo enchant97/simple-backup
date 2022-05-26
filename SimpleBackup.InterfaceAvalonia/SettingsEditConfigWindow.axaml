@@ -5,7 +5,7 @@
 		mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
 		x:Class="SimpleBackup.InterfaceAvalonia.SettingsEditConfigWindow"
 		Title="Edit Config"
-		Width="500" Height="600" WindowStartupLocation="CenterOwner">
+		Width="500" Height="600" MinWidth="400" MinHeight="600" WindowStartupLocation="CenterOwner">
 	<StackPanel>
 		<Label HorizontalAlignment="Center" FontSize="26" Content="Edit Config"/>
 		<Grid>
