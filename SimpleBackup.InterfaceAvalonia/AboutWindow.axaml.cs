@@ -1,7 +1,4 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using SimpleBackup.Resources;
 
 namespace SimpleBackup.InterfaceAvalonia
@@ -11,17 +8,7 @@ namespace SimpleBackup.InterfaceAvalonia
         public AboutWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
-        }
-
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
-            var licenseTB = this.FindControl<TextBox>("LicenseTB");
-            licenseTB.Text = Resource.ResourceManager.GetString("ThirdPartyLicences");
-
+            LicenseTB.Text = Resource.ResourceManager.GetString("ThirdPartyLicences");
         }
     }
 }

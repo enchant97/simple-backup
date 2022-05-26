@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using SimpleBackup.Core.Configuration;
@@ -17,9 +16,6 @@ namespace SimpleBackup.InterfaceAvalonia
         public SettingsEditConfigWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
             IncludedPaths.Items = currentIncludedPaths;
             ExcludedPaths.Items = currentExcludedPaths;
 

@@ -1,7 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.DTO;
 using SimpleBackup.Core.Configuration;
@@ -14,13 +12,6 @@ namespace SimpleBackup.InterfaceAvalonia
         public SettingsWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
-        }
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
         }
         private async void OnClickNewConfig(object sender, RoutedEventArgs e)
         {

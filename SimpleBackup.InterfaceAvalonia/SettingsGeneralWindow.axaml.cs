@@ -1,8 +1,5 @@
-using System;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.BaseWindows.Base;
 using MessageBox.Avalonia.Enums;
@@ -12,28 +9,16 @@ namespace SimpleBackup.InterfaceAvalonia
 {
     public partial class SettingsGeneralWindow : Window
     {
-        private readonly CheckBox showHelpCB;
-        private readonly ComboBox defaultConfigCB;
         public SettingsGeneralWindow()
         {
             InitializeComponent();
-#if DEBUG
-            this.AttachDevTools();
-#endif
-            defaultConfigCB = this.FindControl<ComboBox>("DefaultConfigCB");
-            showHelpCB = this.FindControl<CheckBox>("ShowHelpCB");
-
             LoadFormValues();
         }
         private void LoadFormValues()
         {
-            showHelpCB.IsChecked = QuickConfig.AppConfig.ShowHelp;
-            defaultConfigCB.Items = QuickConfig.AppConfig.BackupConfigs;
-            defaultConfigCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
-        }
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
+            ShowHelpCB.IsChecked = QuickConfig.AppConfig.ShowHelp;
+            DefaultConfigCB.Items = QuickConfig.AppConfig.BackupConfigs;
+            DefaultConfigCB.SelectedIndex = QuickConfig.AppConfig.DefaultConfigI;
         }
         private async void OnClickResetApp(object sender, RoutedEventArgs e)
         {
@@ -55,12 +40,12 @@ namespace SimpleBackup.InterfaceAvalonia
         }
         private void OnClickSave(object sender, RoutedEventArgs e)
         {
-            if (showHelpCB.IsChecked == true)
+            if (ShowHelpCB.IsChecked == true)
                 QuickConfig.AppConfig.ShowHelp = true;
             else
                 QuickConfig.AppConfig.ShowHelp = false;
 
-            QuickConfig.AppConfig.DefaultConfigI = defaultConfigCB.SelectedIndex;
+            QuickConfig.AppConfig.DefaultConfigI = DefaultConfigCB.SelectedIndex;
             QuickConfig.Write();
 
             Close();
