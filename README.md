@@ -1,11 +1,9 @@
 # Simple Backup
 A dotnet app with CLI and GUI mode for creating backups, designed to be easy to use and cross-platform.
 
-> InterfaceAvalonia is currently in development, however after release all other GUI interfaces will be no longer supported
-
-## Notes
+## Features
 - Built with net6.0
-- Includes both GUI (GTK & WPF) and CLI
+- Includes both GUI (Using Avalonia) and CLI
 - User Config is stored at: `$HOME/.config/simple-backup/config.xml`
 - Config is shared between all apps
 - Contains SimpleBackup.Core for creating your own backup app
