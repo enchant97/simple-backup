@@ -1,0 +1,57 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="590"
+		x:Class="SimpleBackup.InterfaceAvalonia.SettingsEditConfigWindow"
+		Title="Edit Config"
+		Width="500" Height="590" WindowStartupLocation="CenterOwner">
+	<StackPanel>
+		<Label HorizontalAlignment="Center" FontSize="26" Content="Edit Config"/>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+			<Label Grid.Column="0" Grid.Row="0" Content="Config To Edit"/>
+			<ComboBox Name="SelectedConfig" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" SelectionChanged="OnChangeSelectedConfig"/>
+			<Label Grid.Column="0" Grid.Row="1" Content="Config Name"/>
+			<TextBox Name="ConfigName" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch"/>
+			<Label Grid.Column="0" Grid.Row="2" Content="Included Paths"/>
+			<StackPanel Grid.Column="1" Grid.Row="2">
+				<ListBox Name="IncludedPaths" Height="100"/>
+				<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Add Path" Click="OnClickAddIncludedPath"/>
+				<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Delete Selected" Click="OnClickDeleteIncludedPath"/>
+			</StackPanel>
+			<Label Grid.Column="0" Grid.Row="3" Content="Excluded Paths"/>
+			<StackPanel Grid.Column="1" Grid.Row="3">
+				<ListBox Name="ExcludedPaths" Height="100"/>
+				<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Add Path" Click="OnClickAddExcludedPath"/>
+				<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Delete Selected" Click="OnClickDeleteExcludedPath"/>
+			</StackPanel>
+			<Label Grid.Column="0" Grid.Row="4" Content="Destination"/>
+			<StackPanel Grid.Column="1" Grid.Row="4">
+				<Label Name="CurrentDestination"/>
+				<Button HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Set Destination" Click="OnClickSetDestination"/>
+			</StackPanel>
+			<Label Grid.Column="0" Grid.Row="5" Content="Versions To Keep"/>
+			<NumericUpDown Name="VersionsToKeep" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="5" Minimum="0"/>
+			<Label Grid.Column="0" Grid.Row="6" Content="Backup Type"/>
+			<ComboBox Name="CurrentBackupType" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="6"/>
+			<Button Grid.ColumnSpan="2" Grid.Row="7" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Delete Config" Click="OnClickDeleteConfig"/>
+			<Button Grid.Column="0" Grid.Row="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Cancel" Click="OnClickCancel"/>
+			<Button Grid.Column="1" Grid.Row="8" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Content="Save" Click="OnClickSave"/>
+		</Grid>
+	</StackPanel>
+</Window>

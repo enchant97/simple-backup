@@ -50,5 +50,10 @@ namespace SimpleBackup.InterfaceAvalonia
             SettingsGeneralWindow dialog = new();
             dialog.ShowDialog(this);
         }
+        private void OnClickEditConfig(object sender, RoutedEventArgs e)
+        {
+            SettingsEditConfigWindow dialog = new();
+            dialog.ShowDialog(this);
+        }
     }
 }
