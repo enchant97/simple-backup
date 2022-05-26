@@ -4,7 +4,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="380"
 		x:Class="SimpleBackup.InterfaceAvalonia.MainWindow"
-		Title="SimpleBackup"
+		Title="SimpleBackup" Icon="resm:SimpleBackup.Resources.Icon.ico?assembly=SimpleBackup.Resources"
 		Width="400" Height="380" CanResize="False" WindowStartupLocation="CenterScreen">
 	<StackPanel >
 		<Menu VerticalAlignment="Top">
